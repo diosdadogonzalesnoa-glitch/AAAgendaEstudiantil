@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #020617;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #0f172a;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 350px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+            color: white;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input {
+            border: none;
+            outline: none;
+        }
+
+        button {
+            background: #22c55e;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #16a34a;
+        }
+
+        .error {
+            color: #ef4444;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .link {
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .link a {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Iniciar Sesión</h2>
+
+    <!-- Mensaje de error -->
+    <div class="error" th:if="${param.error}">
+        Credenciales incorrectas o cuenta bloqueada
+    </div>
+
+    <form action="/login" method="post">
+        <input type="email" name="email" placeholder="Correo" required>
+        <input type="password" name="password" placeholder="Contraseña" required>
+
+        <button type="submit">Ingresar</button>
+    </form>
+
+    <div class="link">
+        <a href="/register">¿No tienes cuenta? Regístrate</a>
+    </div>
+</div>
+
+</body>
+</html>
