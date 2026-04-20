@@ -81,7 +81,10 @@
 <div class="container">
     <h2>Iniciar Sesión</h2>
 
-    <!-- Mensaje de error -->
+    <!-- 🔥 MENSAJE DINÁMICO CON ID PARA JS -->
+    <div class="error" id="msg" th:if="${msg}" th:text="${msg}"></div>
+
+    <!-- Mensaje backup -->
     <div class="error" th:if="${param.error}">
         Credenciales incorrectas o cuenta bloqueada
     </div>
@@ -97,6 +100,31 @@
         <a href="/register">¿No tienes cuenta? Regístrate</a>
     </div>
 </div>
+
+<!-- 🔥 SCRIPT CONTADOR -->
+<script>
+let msg = document.getElementById("msg");
+
+if (msg && msg.innerText.includes("Cuenta bloqueada")) {
+
+    let match = msg.innerText.match(/\d+/);
+
+    if (match) {
+        let segundos = parseInt(match[0]);
+
+        let intervalo = setInterval(() => {
+            segundos--;
+
+            if (segundos > 0) {
+                msg.innerText = "Cuenta bloqueada (" + segundos + "s)";
+            } else {
+                msg.innerText = "Puedes intentar nuevamente";
+                clearInterval(intervalo);
+            }
+        }, 1000);
+    }
+}
+</script>
 
 </body>
 </html>

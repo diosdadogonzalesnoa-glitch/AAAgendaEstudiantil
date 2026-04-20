@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard</title>
+<title>Cursos</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
@@ -27,7 +27,6 @@ justify-content:space-between;
 border-right:1px solid #e5e7eb;
 }
 
-/* 🔥 LOGO MEJORADO */
 .logo{
 display:flex;
 gap:10px;
@@ -83,7 +82,7 @@ background:#e0e7ff;
 color:#2563eb;
 }
 
-/* USER MEJORADO */
+/* USER */
 .user{
 margin-top:30px;
 border-top:1px solid #eee;
@@ -132,61 +131,57 @@ align-items:center;
 margin-bottom:20px;
 }
 
-.header h2{
-font-weight:600;
+.add-btn{
+background:#2563eb;
+color:white;
+border:none;
+padding:8px 14px;
+border-radius:8px;
+cursor:pointer;
 }
 
-.cards{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:20px;
+/* FORM */
+.form{
+display:none;
 margin-bottom:20px;
 }
 
-.card{
-background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 2px 6px rgba(0,0,0,0.05);
+.form input{
+padding:10px;
+margin:5px;
+border-radius:8px;
+border:1px solid #ccc;
 }
 
-.card h3{
-font-size:14px;
-color:#64748b;
-margin-bottom:10px;
-}
-
-.card h2{
-font-size:22px;
+.form button{
+background:#22c55e;
+color:white;
+border:none;
+padding:10px;
+border-radius:8px;
 }
 
 /* GRID */
-.grid{
+.courses-container{
 display:grid;
-grid-template-columns:2fr 1fr;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
 gap:20px;
 }
 
-.box{
+/* CARD */
+.course-card{
 background:white;
 padding:20px;
 border-radius:12px;
 box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
-/* TAREAS */
-.task{
-display:flex;
-justify-content:space-between;
+.course-card h3{
 margin-bottom:10px;
-padding:10px;
-border-left:4px solid #3b82f6;
-background:#f8fafc;
-border-radius:6px;
 }
 
-.task.red{
-border-left:4px solid #ef4444;
+.course-card p{
+color:#64748b;
 }
 
 /* MOBILE */
@@ -238,14 +233,6 @@ display:none;
 display:block;
 }
 
-.cards{
-grid-template-columns:1fr 1fr;
-}
-
-.grid{
-grid-template-columns:1fr;
-}
-
 }
 </style>
 </head>
@@ -264,15 +251,19 @@ grid-template-columns:1fr;
 </div>
 
 <div class="menu">
-<a class="active" href="/dashboard">Dashboard</a>
-<a href="/courses">Cursos</a>
+<a href="/dashboard">Dashboard</a>
+<a class="active" href="/courses">Cursos</a>
 <a>Tareas</a>
 <a>Recordatorios</a>
 <a>Estudio</a>
-<a href="/profile">Mi Perfil</a> <!-- 🔥 FIX -->
+
+<!-- 🔥 AQUÍ ESTABA EL ERROR -->
+<a href="/profile">Mi Perfil</a>
+
 </div>
 
 <a href="/logout" class="logout">Cerrar sesión</a>
+
 </div>
 
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
@@ -291,12 +282,12 @@ grid-template-columns:1fr;
 </div>
 
 <div class="menu">
-<a class="active" href="/dashboard">Dashboard</a>
-<a href="/courses">Cursos</a>
+<a href="/dashboard">Dashboard</a>
+<a class="active" href="/courses">Cursos</a>
 <a>Tareas</a>
 <a>Recordatorios</a>
 <a>Estudio</a>
-<a href="/profile">Mi Perfil</a> <!-- 🔥 FIX -->
+<a href="/profile">Mi Perfil</a>
 </div>
 
 </div>
@@ -321,62 +312,28 @@ grid-template-columns:1fr;
 <div class="header">
 <div style="display:flex;align-items:center;gap:10px;">
 <div class="menu-btn" onclick="toggleMenu()">☰</div>
-<h2>Bienvenido, <span th:text="${nombre}"></span></h2>
-</div>
-</div>
-
-<!-- Tarjetas -->
-<div class="cards">
-
-<div class="card">
-<h3>TAREAS</h3>
-<h2>4</h2>
-<small>1 vencida</small>
+<h2>Cursos</h2>
 </div>
 
-<div class="card">
-<h3>CURSOS</h3>
-<h2>4</h2>
-<small>Activos</small>
+<button class="add-btn" onclick="toggleForm()">+ Añadir</button>
 </div>
 
-<div class="card">
-<h3>HOY</h3>
-<h2>1</h2>
-<small>Recordatorios</small>
+<div class="form" id="form">
+<form action="/courses/add" method="post">
+<input type="text" name="name" placeholder="Nombre del curso" required>
+<input type="text" name="teacher" placeholder="Profesor" required>
+<input type="text" name="schedule" placeholder="Horario" required>
+
+<button type="submit">Guardar</button>
+</form>
 </div>
 
-<div class="card">
-<h3>ESTA SEMANA</h3>
-<h2>18h</h2>
-<small>Tiempo de estudio</small>
-</div>
+<div class="courses-container">
 
-</div>
-
-<!-- GRID -->
-<div class="grid">
-
-<div class="box">
-<h3>Tiempo de estudio por curso</h3>
-<div style="height:150px;display:flex;align-items:center;justify-content:center;color:#94a3b8;">
-[Gráfico aquí]
-</div>
-</div>
-
-<div class="box">
-<h3>Próximas tareas</h3>
-
-<div class="task red">
-<span>Análisis de Complejidad</span>
-<span>Vencida</span>
-</div>
-
-<div class="task">
-<span>Hooks de React</span>
-<span>Hoy</span>
-</div>
-
+<div class="course-card" th:each="c : ${courses}">
+<h3 th:text="${c.name}"></h3>
+<p th:text="${c.teacher}"></p>
+<p th:text="${c.schedule}"></p>
 </div>
 
 </div>
@@ -387,6 +344,11 @@ grid-template-columns:1fr;
 function toggleMenu(){
 document.getElementById("mobileMenu").classList.toggle("active");
 document.getElementById("overlay").classList.toggle("active");
+}
+
+function toggleForm(){
+let form=document.getElementById("form");
+form.style.display=form.style.display==="none"?"block":"none";
 }
 </script>
 

@@ -12,13 +12,13 @@ public class UserService {
     private List<User> users = new ArrayList<>();
     private Long idCounter = 1L;
 
-    //REGISTRAR
+    // REGISTRAR
     public void register(User user) {
         user.setId(idCounter++);
         users.add(user);
     }
 
-    //LOGIN
+    // LOGIN
     public User findByEmailAndPassword(String email, String password) {
         for (User u : users) {
             if (u.getEmail().equals(email) && u.getPassword().equals(password)) {
@@ -28,21 +28,39 @@ public class UserService {
         return null;
     }
 
-    //CRUD para POSTMAN
+    // 🔥 NUEVO: actualizar perfil (SOLO nombre y email)
+    public User updateProfile(Long id, String name, String email) {
 
-    // CREATE
+        for (User u : users) {
+            if (u.getId().equals(id)) {
+
+                // validar gmail
+                if (!email.endsWith("@gmail.com")) {
+                    return null; // error de validación
+                }
+
+                u.setName(name);
+                u.setEmail(email);
+
+                return u;
+            }
+        }
+
+        return null;
+    }
+
+    // CRUD para POSTMAN
+
     public User create(User user) {
         user.setId(idCounter++);
         users.add(user);
         return user;
     }
 
-    // READ ALL
     public List<User> getAll() {
         return users;
     }
 
-    // READ BY ID
     public User getById(Long id) {
         for (User u : users) {
             if (u.getId().equals(id)) {
@@ -52,7 +70,6 @@ public class UserService {
         return null;
     }
 
-    // UPDATE
     public User update(Long id, User newUser) {
         for (User u : users) {
             if (u.getId().equals(id)) {
@@ -65,7 +82,6 @@ public class UserService {
         return null;
     }
 
-    // DELETE
     public boolean delete(Long id) {
         return users.removeIf(u -> u.getId().equals(id));
     }
