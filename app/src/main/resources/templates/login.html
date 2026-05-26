@@ -64,6 +64,13 @@
             text-align: center;
         }
 
+        .success {
+            color: #22c55e;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
         .link {
             text-align: center;
             font-size: 14px;
@@ -73,6 +80,27 @@
             color: #38bdf8;
             text-decoration: none;
         }
+
+        .roles {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .role-box {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+            background: #1e293b;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .role-box.active {
+            border: 2px solid #22c55e;
+            background: #334155;
+        }
     </style>
 </head>
 
@@ -81,16 +109,25 @@
 <div class="container">
     <h2>Iniciar Sesión</h2>
 
-    <!-- 🔥 MENSAJE DINÁMICO CON ID PARA JS -->
-    <div class="error" id="msg" th:if="${msg}" th:text="${msg}"></div>
+    <div class="success" th:if="${msg != null and msg.contains('Registro exitoso')}" th:text="${msg}"></div>
+    <div class="error" id="msg" th:if="${msg != null and !msg.contains('Registro exitoso')}" th:text="${msg}"></div>
 
-    <!-- Mensaje backup -->
-    <div class="error" th:if="${param.error}">
-        Credenciales incorrectas o cuenta bloqueada
+    <div class="roles">
+        <div class="role-box" onclick="selectRole('ESTUDIANTE', this)">
+            🎓<br>Alumno
+        </div>
+
+        <div class="role-box" onclick="selectRole('DOCENTE', this)">
+            👨‍🏫<br>Docente
+        </div>
     </div>
 
-    <form action="/login" method="post">
-        <input type="email" name="email" placeholder="Correo" required>
+    <form action="/login" method="post" onsubmit="return validar()">
+
+        <input type="hidden" id="role">
+
+        <input type="email" name="email" id="email" placeholder="Correo" required>
+
         <input type="password" name="password" placeholder="Contraseña" required>
 
         <button type="submit">Ingresar</button>
@@ -101,8 +138,39 @@
     </div>
 </div>
 
-<!-- 🔥 SCRIPT CONTADOR -->
 <script>
+let selectedRole = "";
+
+function selectRole(role, element) {
+
+    selectedRole = role;
+
+    document.querySelectorAll(".role-box").forEach(e => e.classList.remove("active"));
+    element.classList.add("active");
+}
+
+function validar() {
+
+    let email = document.getElementById("email").value;
+
+    if (!selectedRole) {
+        alert("Selecciona un rol");
+        return false;
+    }
+
+    if (selectedRole === "ESTUDIANTE" && !email.startsWith("U")) {
+        alert("Debes usar un correo de estudiante (U...)");
+        return false;
+    }
+
+    if (selectedRole === "DOCENTE" && !email.startsWith("C")) {
+        alert("Debes usar un correo de docente (C...)");
+        return false;
+    }
+
+    return true;
+}
+
 let msg = document.getElementById("msg");
 
 if (msg && msg.innerText.includes("Cuenta bloqueada")) {

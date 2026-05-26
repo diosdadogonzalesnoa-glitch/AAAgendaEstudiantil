@@ -1,88 +1,151 @@
 package com.darkcode.spring.app.service;
 
 import com.darkcode.spring.app.model.User;
+import com.darkcode.spring.app.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class UserService {
 
-    private List<User> users = new ArrayList<>();
-    private Long idCounter = 1L;
+    @Autowired
+    private UserRepository userRepository;
 
-    // REGISTRAR
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public void register(User user) {
-        user.setId(idCounter++);
-        users.add(user);
-    }
 
-    // LOGIN
-    public User findByEmailAndPassword(String email, String password) {
-        for (User u : users) {
-            if (u.getEmail().equals(email) && u.getPassword().equals(password)) {
-                return u;
-            }
+        if (!user.getEmail().endsWith("@utp.edu.pe")) {
+            throw new RuntimeException(
+                    "Correo inválido, debe ser @utp.edu.pe"
+            );
         }
-        return null;
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        userRepository.save(user);
     }
 
-    // 🔥 NUEVO: actualizar perfil (SOLO nombre y email)
-    public User updateProfile(Long id, String name, String email) {
+    public User findByEmail(String email) {
 
-        for (User u : users) {
-            if (u.getId().equals(id)) {
+        return userRepository.findByEmail(email);
+    }
 
-                // validar gmail
-                if (!email.endsWith("@gmail.com")) {
-                    return null; // error de validación
-                }
+    public User findByEmailAndPassword(String email,
+                                       String password) {
 
-                u.setName(name);
-                u.setEmail(email);
+        User user = userRepository.findByEmail(email);
 
-                return u;
-            }
+        if (user == null) {
+            return null;
+        }
+
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return user;
         }
 
         return null;
     }
 
-    // CRUD para POSTMAN
+    public boolean rawPasswordMatches(User user,
+                                      String rawPassword) {
+
+        if (user == null || rawPassword == null || user.getPassword() == null) {
+            return false;
+        }
+
+        return user.getPassword().equals(rawPassword);
+    }
+
+    public User upgradePasswordToBCrypt(User user,
+                                        String rawPassword) {
+
+        if (user == null || rawPassword == null) {
+            return null;
+        }
+
+        user.setPassword(passwordEncoder.encode(rawPassword));
+
+        return userRepository.save(user);
+    }
+
+    public User updateProfile(Long id,
+                              String name,
+                              String email) {
+
+        User user = userRepository
+                .findById(id)
+                .orElse(null);
+
+        if (user != null) {
+
+            if (!email.endsWith("@utp.edu.pe")) {
+                return null;
+            }
+
+            user.setName(name);
+            user.setEmail(email);
+
+            return userRepository.save(user);
+        }
+
+        return null;
+    }
 
     public User create(User user) {
-        user.setId(idCounter++);
-        users.add(user);
-        return user;
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        return userRepository.save(user);
     }
 
     public List<User> getAll() {
-        return users;
+
+        return userRepository.findAll();
     }
 
     public User getById(Long id) {
-        for (User u : users) {
-            if (u.getId().equals(id)) {
-                return u;
-            }
-        }
-        return null;
+
+        return userRepository.findById(id).orElse(null);
     }
 
-    public User update(Long id, User newUser) {
-        for (User u : users) {
-            if (u.getId().equals(id)) {
-                u.setName(newUser.getName());
-                u.setEmail(newUser.getEmail());
-                u.setPassword(newUser.getPassword());
-                return u;
+    public User update(Long id,
+                       User newUser) {
+
+        User user = userRepository
+                .findById(id)
+                .orElse(null);
+
+        if (user != null) {
+
+            user.setName(newUser.getName());
+            user.setEmail(newUser.getEmail());
+
+            if (newUser.getPassword() != null &&
+                !newUser.getPassword().trim().isEmpty()) {
+
+                user.setPassword(passwordEncoder.encode(newUser.getPassword()));
             }
+
+            return userRepository.save(user);
         }
+
         return null;
     }
 
     public boolean delete(Long id) {
-        return users.removeIf(u -> u.getId().equals(id));
+
+        if (userRepository.existsById(id)) {
+
+            userRepository.deleteById(id);
+
+            return true;
+        }
+
+        return false;
     }
 }

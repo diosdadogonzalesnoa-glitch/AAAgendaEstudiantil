@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tareas</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:'Poppins',sans-serif;
+background:#f5f5f5;
+display:flex;
+color:#111827;
+}
+
+.sidebar{
+width:240px;
+background:white;
+height:100vh;
+padding:20px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+border-right:1px solid #e5e7eb;
+position:fixed;
+left:0;
+top:0;
+}
+
+.logo{
+display:flex;
+gap:10px;
+align-items:center;
+margin-bottom:20px;
+padding-bottom:10px;
+border-bottom:1px solid #eee;
+}
+
+.logo-icon{font-size:32px;}
+
+.logo-text{
+display:flex;
+flex-direction:column;
+line-height:1.1;
+}
+
+.logo-text b{font-size:20px;}
+.logo-text span{font-size:14px;color:#64748b;}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.menu a{
+text-decoration:none;
+color:#64748b;
+padding:10px;
+border-radius:8px;
+display:flex;
+gap:10px;
+align-items:center;
+transition:0.2s;
+}
+
+.menu a:hover{background:#e0e7ff;color:#2563eb;}
+.menu .active{background:#e0e7ff;color:#2563eb;}
+
+.user{
+margin-top:30px;
+border-top:1px solid #eee;
+padding-top:15px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.user-icon{font-size:28px;}
+
+.user-info{
+display:flex;
+flex-direction:column;
+}
+
+.user-info b{font-size:14px;}
+.user-info span{font-size:12px;color:#64748b;}
+
+.logout{
+color:#ef4444;
+text-decoration:none;
+display:block;
+margin-top:10px;
+}
+
+.menu-btn{
+display:none;
+font-size:24px;
+cursor:pointer;
+}
+
+.sidebar-mobile{
+position:fixed;
+left:-260px;
+top:0;
+width:240px;
+height:100%;
+background:white;
+padding:20px;
+transition:0.3s;
+z-index:1000;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
+
+.sidebar-mobile.active{left:0;}
+
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.3);
+display:none;
+z-index:999;
+}
+
+.overlay.active{display:block;}
+
+.main{
+margin-left:240px;
+flex:1;
+padding:30px;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.title h1{
+font-size:34px;
+margin-bottom:5px;
+}
+
+.title p{color:#6b7280;}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+margin-bottom:30px;
+}
+
+.card{
+background:white;
+border:2px solid #e5e7eb;
+border-radius:18px;
+padding:25px;
+text-align:center;
+transition:0.2s;
+cursor:pointer;
+}
+
+.card:hover{transform:translateY(-3px);}
+
+.card.active{
+border:2px solid black;
+background:#eef2ff;
+}
+
+.card h2{
+font-size:40px;
+margin-bottom:5px;
+}
+
+.card span{
+color:#4b5563;
+font-size:15px;
+}
+
+.tasks-box{
+background:white;
+border-radius:20px;
+border:1px solid #e5e7eb;
+overflow:hidden;
+}
+
+.tasks-header{
+padding:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #e5e7eb;
+}
+
+.tasks-header h3{font-size:18px;}
+
+.task{
+padding:25px;
+border-bottom:1px solid #e5e7eb;
+display:flex;
+justify-content:space-between;
+gap:20px;
+}
+
+.task-left{
+display:flex;
+gap:18px;
+flex:1;
+}
+
+.task-select-area{
+width:22px;
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:8px;
+margin-top:5px;
+}
+
+.task-checkbox{
+width:22px;
+height:22px;
+border:2px solid transparent;
+border-radius:5px;
+background:transparent;
+}
+
+.task-checkbox-docente{
+width:22px;
+height:22px;
+border:2px solid #d1d5db;
+border-radius:5px;
+cursor:pointer;
+appearance:none;
+background:white;
+}
+
+.task-checkbox-docente:checked{
+background:#2563eb;
+border-color:#2563eb;
+}
+
+.task-checkbox-docente:checked::after{
+content:"✓";
+color:white;
+font-size:14px;
+font-weight:700;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.delete-task-form{
+display:none;
+}
+
+.delete-task-form.active{
+display:block;
+}
+
+.delete-task-btn{
+width:22px;
+height:22px;
+border:none;
+border-radius:5px;
+background:#fee2e2;
+color:#dc2626;
+cursor:pointer;
+font-size:13px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.task-color{
+width:5px;
+border-radius:10px;
+background:#2563eb;
+}
+
+.task-color.red{background:#ec4899;}
+.task-color.orange{background:#f97316;}
+.task-color.purple{background:#7c3aed;}
+
+.task-content{flex:1;}
+
+.task-content h2{
+font-size:30px;
+margin-bottom:6px;
+}
+
+.task-content p{
+color:#4b5563;
+margin-bottom:10px;
+}
+
+.task-info{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+font-size:14px;
+color:#6b7280;
+margin-bottom:15px;
+}
+
+.task-info b{color:#2563eb;}
+
+.task-actions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.btn{
+border:none;
+padding:12px 18px;
+border-radius:12px;
+font-weight:600;
+cursor:pointer;
+font-family:'Poppins',sans-serif;
+text-decoration:none;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+}
+
+.btn-upload{
+background:#2563eb;
+color:white;
+}
+
+.btn-upload:hover{background:#1d4ed8;}
+
+.btn-practice{
+background:#7c3aed;
+color:white;
+}
+
+.btn-view{
+background:#111827;
+color:white;
+}
+
+.delivery-form{
+display:none;
+margin-top:18px;
+background:#f8fafc;
+border:1px solid #e5e7eb;
+border-radius:16px;
+padding:18px;
+}
+
+.delivery-form.active{display:block;}
+
+.delivery-form textarea{
+width:100%;
+min-height:180px;
+resize:vertical;
+padding:14px;
+border-radius:12px;
+border:1px solid #d1d5db;
+font-family:'Poppins',sans-serif;
+font-size:14px;
+margin-bottom:12px;
+}
+
+.file-picker{
+width:100%;
+background:white;
+padding:12px;
+border-radius:12px;
+border:1px solid #d1d5db;
+margin-bottom:12px;
+font-family:'Poppins',sans-serif;
+}
+
+.selected-files-list{
+display:flex;
+flex-direction:column;
+gap:8px;
+margin-bottom:12px;
+}
+
+.selected-file-item{
+background:white;
+border:1px solid #d1d5db;
+border-radius:10px;
+padding:10px 12px;
+font-size:14px;
+color:#374151;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+}
+
+.selected-file-item span{
+word-break:break-all;
+}
+
+.remove-file-btn{
+border:none;
+background:#fee2e2;
+color:#dc2626;
+border-radius:8px;
+padding:4px 8px;
+cursor:pointer;
+font-weight:700;
+}
+
+.delivery-form small{
+display:block;
+color:#6b7280;
+margin-bottom:12px;
+}
+
+.btn-send{
+background:#22c55e;
+color:white;
+}
+
+.file-box{
+margin-top:15px;
+background:#ecfdf5;
+border:1px solid #86efac;
+padding:15px;
+border-radius:14px;
+}
+
+.file-box h4{
+color:#166534;
+margin-bottom:5px;
+}
+
+.file-box p{
+color:#15803d;
+font-size:14px;
+}
+
+.task-right{
+display:flex;
+flex-direction:column;
+gap:10px;
+align-items:flex-end;
+}
+
+.badge{
+padding:8px 14px;
+border-radius:999px;
+font-size:13px;
+font-weight:600;
+}
+
+.high{background:#fee2e2;color:#dc2626;}
+.medium{background:#ffedd5;color:#ea580c;}
+.low{background:#dcfce7;color:#16a34a;}
+.overdue{background:#fee2e2;color:#dc2626;}
+.pending{background:#fef3c7;color:#d97706;}
+.completed{background:#dcfce7;color:#16a34a;}
+.practice{background:#ede9fe;color:#7c3aed;}
+
+.empty{
+padding:70px 20px;
+text-align:center;
+color:#9ca3af;
+}
+
+.teacher-cards{
+grid-template-columns:repeat(3,1fr);
+}
+
+@media(max-width:1000px){
+
+.cards{grid-template-columns:1fr 1fr;}
+
+.task{flex-direction:column;}
+
+.task-right{
+align-items:flex-start;
+flex-direction:row;
+flex-wrap:wrap;
+}
+
+}
+
+@media(max-width:900px){
+
+.sidebar{display:none;}
+
+.menu-btn{display:block;}
+
+.main{
+margin-left:0;
+padding:20px;
+}
+
+.cards{grid-template-columns:1fr;}
+
+.title h1{font-size:28px;}
+
+.task-content h2{font-size:24px;}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar-mobile" id="mobileMenu">
+
+<div>
+
+<div class="logo">
+<div class="logo-icon">📘</div>
+
+<div class="logo-text">
+<b>Agenda</b>
+<span>Estudiantil</span>
+</div>
+
+</div>
+
+<div class="menu">
+<a href="/dashboard">Dashboard</a>
+<a href="/courses">Cursos</a>
+<a class="active" href="/tasks">Tareas</a>
+<a>Recordatorios</a>
+<a href="/study">Estudio</a>
+<a href="/profile">Mi Perfil</a>
+</div>
+
+</div>
+
+<div>
+
+<div class="user">
+<div class="user-icon">👤</div>
+
+<div class="user-info">
+<b th:text="${nombre}"></b>
+<span th:text="${session.user.role == 'DOCENTE' ? 'Docente' : 'Estudiante'}"></span>
+</div>
+
+</div>
+
+<a href="/logout" class="logout">Cerrar sesión</a>
+
+</div>
+
+</div>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<div class="sidebar">
+
+<div>
+
+<div class="logo">
+<div class="logo-icon">📘</div>
+
+<div class="logo-text">
+<b>Agenda</b>
+<span>Estudiantil</span>
+</div>
+
+</div>
+
+<div class="menu">
+<a href="/dashboard">Dashboard</a>
+<a href="/courses">Cursos</a>
+<a class="active" href="/tasks">Tareas</a>
+<a>Recordatorios</a>
+<a href="/study">Estudio</a>
+<a href="/profile">Mi Perfil</a>
+</div>
+
+</div>
+
+<div>
+
+<div class="user">
+<div class="user-icon">👤</div>
+
+<div class="user-info">
+<b th:text="${nombre}"></b>
+<span th:text="${session.user.role == 'DOCENTE' ? 'Docente' : 'Estudiante'}"></span>
+</div>
+
+</div>
+
+<a href="/logout" class="logout">Cerrar sesión</a>
+
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="top">
+
+<div style="display:flex;align-items:center;gap:12px;">
+
+<div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+<div class="title">
+<h1>Tareas</h1>
+<p>Gestiona tus entregas, prácticas y actividades</p>
+</div>
+
+</div>
+
+</div>
+
+<div class="cards teacher-cards"
+     th:if="${session.user.role == 'DOCENTE'}">
+
+<div class="card active">
+<h2 th:text="${totalTasks}">0</h2>
+<span>Total</span>
+</div>
+
+<div class="card">
+<h2 th:text="${receivedTasks}">0</h2>
+<span>Recibidas</span>
+</div>
+
+<div class="card">
+<h2 th:text="${notReceivedTasks}">0</h2>
+<span>No recibidas</span>
+</div>
+
+</div>
+
+<div class="cards"
+     th:if="${session.user.role != 'DOCENTE'}">
+
+<div class="card active">
+<h2 th:text="${totalTasks}">0</h2>
+<span>Total</span>
+</div>
+
+<div class="card">
+<h2 th:text="${pendingTasks}">0</h2>
+<span>Pendientes</span>
+</div>
+
+<div class="card">
+<h2 th:text="${completedTasks}">0</h2>
+<span>Completadas</span>
+</div>
+
+<div class="card">
+<h2 th:text="${overdueTasks}">0</h2>
+<span>Vencidas</span>
+</div>
+
+</div>
+
+<div class="tasks-box">
+
+<div class="tasks-header">
+<h3>📋 Todas las tareas y prácticas</h3>
+<span th:text="${totalTasks} + ' actividad(es)'">0 actividad(es)</span>
+</div>
+
+<div th:if="${#lists.isEmpty(tasks)}" class="empty">
+
+<h2 style="margin-bottom:10px;">No hay actividades todavía</h2>
+
+<p>Cuando un docente publique tareas o prácticas aparecerán aquí.</p>
+
+</div>
+
+<div th:each="task : ${tasks}" class="task">
+
+<div class="task-left">
+
+<div class="task-select-area">
+
+<input th:if="${session.user.role == 'DOCENTE'}"
+       type="checkbox"
+       class="task-checkbox-docente"
+       th:attr="onclick=|toggleDeleteButton(${task.id})|">
+
+<div th:if="${session.user.role != 'DOCENTE'}"
+     class="task-checkbox"></div>
+
+<form th:if="${session.user.role == 'DOCENTE'}"
+      th:id="'delete-task-' + ${task.id}"
+      class="delete-task-form"
+      th:action="@{'/tasks/delete/' + ${task.id}}"
+      method="post"
+      onsubmit="return confirm('¿Estás seguro de eliminar esta actividad? También dejará de aparecer para los estudiantes.')">
+
+<button type="submit" class="delete-task-btn">🗑</button>
+
+</form>
+
+</div>
+
+<div class="task-color"
+th:classappend="${task.taskType == 'PRACTICA'} ? ' purple' :
+                 (${task.priority == 'ALTA'} ? ' red' :
+                 (${task.priority == 'MEDIA'} ? ' orange' : ''))">
+</div>
+
+<div class="task-content">
+
+<h2 th:text="${task.title}"></h2>
+
+<p th:text="${task.description}"></p>
+
+<div class="task-info">
+
+<span>
+<b th:text="${task.course != null ? task.course.name : 'Sin curso'}"></b>
+</span>
+
+<span>
+🕒
+<span th:text="${task.dueDate != null ? task.dueDate : 'Sin fecha límite'}"></span>
+</span>
+
+<span th:if="${task.taskType == 'PRACTICA'}">
+📝 Práctica calificada
+</span>
+
+<span th:if="${task.taskType != 'PRACTICA'}">
+📌 Tarea común
+</span>
+
+</div>
+
+<div class="task-actions">
+
+<a th:if="${session.user.role == 'DOCENTE'}"
+   th:href="@{'/tasks/submissions/' + ${task.id}}"
+   class="btn btn-view">
+👁 Ver entregas
+</a>
+
+<a th:if="${session.user.role != 'DOCENTE'
+and task.taskType == 'PRACTICA'
+and !submittedTaskIds.contains(task.id)
+and (task.dueDate == null or !task.dueDate.isBefore(T(java.time.LocalDateTime).now()))}"
+   th:href="@{'/tasks/practice/' + ${task.id}}"
+   class="btn btn-practice">
+📝 Resolver práctica
+</a>
+
+<button th:if="${session.user.role != 'DOCENTE'
+and task.taskType != 'PRACTICA'
+and !submittedTaskIds.contains(task.id)
+and (task.dueDate == null or !task.dueDate.isBefore(T(java.time.LocalDateTime).now()))}"
+        type="button"
+        class="btn btn-upload"
+        th:attr="onclick=|toggleDelivery(${task.id})|">
+📤 Entregar tarea
+</button>
+
+<div class="badge overdue"
+th:if="${session.user.role != 'DOCENTE'
+and !submittedTaskIds.contains(task.id)
+and task.dueDate != null
+and task.dueDate.isBefore(T(java.time.LocalDateTime).now())}">
+Entrega vencida
+</div>
+
+<div th:if="${session.user.role != 'DOCENTE' and submittedTaskIds.contains(task.id)}"
+     class="badge completed">
+Entregada
+</div>
+
+</div>
+
+<div class="delivery-form"
+     th:id="'delivery-' + ${task.id}"
+     th:if="${session.user.role != 'DOCENTE'
+     and task.taskType != 'PRACTICA'
+     and !submittedTaskIds.contains(task.id)
+     and (task.dueDate == null or !task.dueDate.isBefore(T(java.time.LocalDateTime).now()))}">
+
+<form th:action="@{'/tasks/submit/' + ${task.id}}"
+      method="post"
+      enctype="multipart/form-data"
+      onsubmit="return validateDelivery(this)">
+
+<textarea name="answerText"
+          maxlength="9000"
+          placeholder="Escribe aquí tu respuesta. Puedes desarrollar ejercicios, explicar procedimientos o pegar tu solución completa..."></textarea>
+
+<input type="file"
+       class="file-picker"
+       multiple
+       onchange="addFiles(this)">
+
+<div class="selected-files-list"></div>
+
+<input type="file"
+       name="files"
+       multiple
+       class="real-files-input"
+       style="display:none;">
+
+<small>Máximo 20 archivos. Puedes subir PDF, Word, Excel, imágenes u otros archivos.</small>
+
+<button type="submit" class="btn btn-send">
+Enviar entrega
+</button>
+
+</form>
+
+</div>
+
+<div class="file-box"
+     th:if="${session.user.role != 'DOCENTE' and submittedTaskIds.contains(task.id)}">
+
+<h4 th:if="${task.taskType != 'PRACTICA'}">📄 Tarea entregada</h4>
+<h4 th:if="${task.taskType == 'PRACTICA'}">📝 Práctica enviada</h4>
+
+<p>Tu entrega fue registrada correctamente.</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="task-right">
+
+<div class="badge practice"
+th:if="${task.taskType == 'PRACTICA'}">
+PRÁCTICA
+</div>
+
+<div class="badge"
+th:if="${task.taskType != 'PRACTICA'}"
+th:classappend="${task.priority == 'ALTA'} ? ' high' :
+                 (${task.priority == 'MEDIA'} ? ' medium' : ' low')">
+
+<span th:text="${task.priority}"></span>
+
+</div>
+
+<div class="badge overdue"
+th:if="${task.dueDate != null 
+and task.dueDate.isBefore(T(java.time.LocalDateTime).now())
+and (session.user.role == 'DOCENTE' or (session.user.role != 'DOCENTE' and !submittedTaskIds.contains(task.id)))}">
+Vencida
+</div>
+
+<div class="badge pending"
+th:if="${session.user.role == 'DOCENTE' or (session.user.role != 'DOCENTE' and !submittedTaskIds.contains(task.id))}">
+Pendiente calificación
+</div>
+
+<div class="badge completed"
+th:if="${session.user.role != 'DOCENTE' and submittedTaskIds.contains(task.id)}">
+Completada
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let accumulatedFiles = {};
+
+function toggleMenu(){
+document.getElementById("mobileMenu").classList.toggle("active");
+document.getElementById("overlay").classList.toggle("active");
+}
+
+function toggleDeleteButton(id){
+
+let form = document.getElementById("delete-task-" + id);
+
+if(form){
+form.classList.toggle("active");
+}
+
+}
+
+function toggleDelivery(id){
+let form = document.getElementById("delivery-" + id);
+
+if(form){
+form.classList.toggle("active");
+}
+}
+
+function addFiles(input){
+
+let form = input.closest("form");
+let deliveryForm = input.closest(".delivery-form");
+let taskId = deliveryForm ? deliveryForm.id : "default";
+
+if(!accumulatedFiles[taskId]){
+accumulatedFiles[taskId] = [];
+}
+
+let newFiles = Array.from(input.files);
+
+if(accumulatedFiles[taskId].length + newFiles.length > 20){
+alert("Solo puedes subir como máximo 20 archivos.");
+input.value = "";
+return;
+}
+
+newFiles.forEach(function(file){
+accumulatedFiles[taskId].push(file);
+});
+
+input.value = "";
+
+refreshFileList(form, taskId);
+}
+
+function refreshFileList(form, taskId){
+
+let list = form.querySelector(".selected-files-list");
+let realInput = form.querySelector(".real-files-input");
+
+list.innerHTML = "";
+
+let dataTransfer = new DataTransfer();
+
+accumulatedFiles[taskId].forEach(function(file, index){
+
+dataTransfer.items.add(file);
+
+let item = document.createElement("div");
+item.className = "selected-file-item";
+
+let fileName = document.createElement("span");
+fileName.textContent = "📄 " + file.name;
+
+let removeButton = document.createElement("button");
+removeButton.type = "button";
+removeButton.className = "remove-file-btn";
+removeButton.textContent = "×";
+removeButton.onclick = function(){
+removeFile(taskId, index, form);
+};
+
+item.appendChild(fileName);
+item.appendChild(removeButton);
+list.appendChild(item);
+
+});
+
+realInput.files = dataTransfer.files;
+}
+
+function removeFile(taskId, index, form){
+
+accumulatedFiles[taskId].splice(index, 1);
+
+refreshFileList(form, taskId);
+}
+
+function validateDelivery(form){
+
+let text = form.querySelector("textarea[name='answerText']").value.trim();
+let realInput = form.querySelector(".real-files-input");
+let files = realInput ? realInput.files : [];
+
+if(text.length === 0 && files.length === 0){
+alert("Debes escribir una respuesta o subir al menos un archivo.");
+return false;
+}
+
+if(files.length > 20){
+alert("Solo puedes subir como máximo 20 archivos.");
+return false;
+}
+
+return true;
+}
+
+</script>
+
+</body>
+</html>

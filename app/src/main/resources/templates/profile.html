@@ -27,6 +27,47 @@ justify-content:space-between;
 border-right:1px solid #e5e7eb;
 }
 
+/* MOBILE SIDEBAR */
+.sidebar-mobile{
+position:fixed;
+left:-260px;
+top:0;
+width:240px;
+height:100%;
+background:white;
+padding:20px;
+transition:0.3s;
+z-index:1000;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
+
+.sidebar-mobile.active{
+left:0;
+}
+
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.3);
+display:none;
+}
+
+.overlay.active{
+display:block;
+}
+
+.menu-btn{
+display:none;
+font-size:22px;
+cursor:pointer;
+}
+
+/* LOGO */
 .logo{
 display:flex;
 gap:10px;
@@ -47,6 +88,7 @@ line-height:1.1;
 .logo-text b{font-size:20px;}
 .logo-text span{font-size:14px;color:#64748b;}
 
+/* MENU */
 .menu{
 display:flex;
 flex-direction:column;
@@ -66,6 +108,7 @@ align-items:center;
 .menu a:hover{background:#e0e7ff;color:#2563eb;}
 .menu .active{background:#e0e7ff;color:#2563eb;}
 
+/* USER */
 .user{
 margin-top:30px;
 border-top:1px solid #eee;
@@ -89,43 +132,6 @@ color:#ef4444;
 text-decoration:none;
 display:block;
 margin-top:10px;
-}
-
-/* MOBILE MENU */
-.menu-btn{
-display:none;
-font-size:22px;
-cursor:pointer;
-}
-
-.sidebar-mobile{
-position:fixed;
-left:-260px;
-top:0;
-width:240px;
-height:100%;
-background:white;
-padding:20px;
-transition:0.3s;
-z-index:1000;
-}
-
-.sidebar-mobile.active{
-left:0;
-}
-
-.overlay{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.3);
-display:none;
-}
-
-.overlay.active{
-display:block;
 }
 
 /* MAIN */
@@ -229,58 +235,11 @@ border-radius:10px;
 cursor:pointer;
 }
 
-/* STATS */
-.stats{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:15px;
-}
-
-.stat{
-background:white;
-padding:15px;
-border-radius:12px;
-box-shadow:0 2px 6px rgba(0,0,0,0.05);
-}
-
-.progress{
-height:6px;
-background:#e5e7eb;
-border-radius:10px;
-margin-top:8px;
-}
-
-.progress div{
-height:100%;
-width:70%;
-background:#3b82f6;
-border-radius:10px;
-}
-
-/* BOTTOM */
-.bottom{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-}
-
-.box{
-background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 2px 6px rgba(0,0,0,0.05);
-height:200px;
-}
-
 /* RESPONSIVE */
 @media(max-width:900px){
-
 .sidebar{display:none;}
 .menu-btn{display:block;}
-
 .top{grid-template-columns:1fr;}
-.bottom{grid-template-columns:1fr;}
-
 }
 </style>
 </head>
@@ -290,31 +249,6 @@ height:200px;
 <!-- SIDEBAR MOBILE -->
 <div class="sidebar-mobile" id="mobileMenu">
 
-<div class="logo">
-<div class="logo-icon">📘</div>
-<div class="logo-text">
-<b>Agenda</b>
-<span>Estudiantil</span>
-</div>
-</div>
-
-<div class="menu">
-<a href="/dashboard">Dashboard</a>
-<a href="/courses">Cursos</a>
-<a>Tareas</a>
-<a>Recordatorios</a>
-<a>Estudio</a>
-<a class="active" href="/profile">Mi Perfil</a>
-</div>
-
-<a href="/logout" class="logout">Cerrar sesión</a>
-
-</div>
-
-<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
-<!-- SIDEBAR DESKTOP -->
-<div class="sidebar">
 <div>
 
 <div class="logo">
@@ -328,9 +262,9 @@ height:200px;
 <div class="menu">
 <a href="/dashboard">Dashboard</a>
 <a href="/courses">Cursos</a>
-<a>Tareas</a>
+<a href="/tasks">Tareas</a>
 <a>Recordatorios</a>
-<a>Estudio</a>
+<a href="/study">Estudio</a>
 <a class="active" href="/profile">Mi Perfil</a>
 </div>
 
@@ -341,15 +275,53 @@ height:200px;
 <div class="user-icon">👤</div>
 <div class="user-info">
 <b th:text="${nombre}"></b>
-<span>Estudiante</span>
+<span th:text="${session.user.role == 'DOCENTE' ? 'Docente' : 'Estudiante'}"></span>
 </div>
 </div>
 
 <a href="/logout" class="logout">Cerrar sesión</a>
 </div>
+
 </div>
 
-<!-- MAIN -->
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<!-- SIDEBAR DESKTOP -->
+<div class="sidebar">
+
+<div>
+<div class="logo">
+<div class="logo-icon">📘</div>
+<div class="logo-text">
+<b>Agenda</b>
+<span>Estudiantil</span>
+</div>
+</div>
+
+<div class="menu">
+<a href="/dashboard">Dashboard</a>
+<a href="/courses">Cursos</a>
+<a href="/tasks">Tareas</a>
+<a>Recordatorios</a>
+<a href="/study">Estudio</a>
+<a class="active" href="/profile">Mi Perfil</a>
+</div>
+</div>
+
+<div>
+<div class="user">
+<div class="user-icon">👤</div>
+<div class="user-info">
+<b th:text="${nombre}"></b>
+<span th:text="${session.user.role == 'DOCENTE' ? 'Docente' : 'Estudiante'}"></span>
+</div>
+</div>
+
+<a href="/logout" class="logout">Cerrar sesión</a>
+</div>
+
+</div>
+
 <div class="main">
 
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;">
@@ -375,7 +347,9 @@ height:200px;
 <span class="edit" onclick="toggleEdit()">✏️</span>
 </h3>
 
-<p style="color:#64748b;">Estudiante</p>
+<p style="color:#64748b;"
+   th:text="${session.user.role == 'DOCENTE' ? 'Docente' : 'Estudiante'}">
+</p>
 
 </div>
 
@@ -390,7 +364,9 @@ height:200px;
 <div class="info-box">
 <div>
 <div class="label">Rol</div>
-<div class="value">Estudiante</div>
+<div class="value"
+     th:text="${session.user.role == 'DOCENTE' ? 'Docente' : 'Estudiante'}">
+</div>
 </div>
 <div class="icon">👤</div>
 </div>
@@ -406,8 +382,8 @@ height:200px;
 <div class="form" id="editForm">
 <form action="/profile/update" method="post">
 
-<input type="text" name="name" placeholder="Nombre" required>
-<input type="email" name="email" placeholder="Correo (@gmail.com)" required>
+<input type="text" name="name" placeholder="Nuevo nombre" required>
+<input type="hidden" name="email" th:value="${email}">
 
 <div class="btn-group">
 <button class="save">Guardar</button>
@@ -419,38 +395,8 @@ height:200px;
 
 </div>
 
-<div class="stats">
-
-<div class="stat">
-<b>Promedio General</b>
-<h2>0</h2>
 </div>
 
-<div class="stat">
-<b>Tiempo de Estudio</b>
-<h2>0h</h2>
-</div>
-
-<div class="stat">
-<b>Tareas Completadas</b>
-<div class="progress"><div></div></div>
-</div>
-
-<div class="stat">
-<b>Cursos Activos</b>
-<ul>
-<li>🔵 Curso 1</li>
-<li>🟣 Curso 2</li>
-</ul>
-</div>
-
-</div>
-
-</div>
-
-<div class="bottom">
-<div class="box">[Actividad reciente]</div>
-<div class="box">[Rendimiento]</div>
 </div>
 
 </div>

@@ -14,7 +14,6 @@ public class ProfileController {
     @Autowired
     private UserService userService;
 
-    // 🔥 VER PERFIL
     @GetMapping("/profile")
     public String profile(Model model, HttpSession session) {
 
@@ -24,22 +23,19 @@ public class ProfileController {
             return "redirect:/login";
         }
 
-        String nombreCompleto = user.getName();
-        String primerNombre = nombreCompleto.split(" ")[0];
+        String primerNombre = user.getName().split(" ")[0];
 
         model.addAttribute("nombre", primerNombre);
         model.addAttribute("email", user.getEmail());
         model.addAttribute("user", user);
+        model.addAttribute("role", user.getRole());
 
         return "profile";
     }
 
-    // 🔥 ACTUALIZAR PERFIL
     @PostMapping("/profile/update")
     public String updateProfile(@RequestParam String name,
-                                @RequestParam String email,
-                                HttpSession session,
-                                Model model) {
+                                HttpSession session) {
 
         User user = (User) session.getAttribute("user");
 
@@ -47,19 +43,11 @@ public class ProfileController {
             return "redirect:/login";
         }
 
-        User updated = userService.updateProfile(user.getId(), name, email);
+        user.setName(name);
 
-        if (updated == null) {
-            String primerNombre = user.getName().split(" ")[0];
+        userService.update(user.getId(), user);
 
-            model.addAttribute("nombre", primerNombre);
-            model.addAttribute("email", user.getEmail());
-            model.addAttribute("error", "El correo debe terminar en @gmail.com");
-
-            return "profile";
-        }
-
-        session.setAttribute("user", updated);
+        session.setAttribute("user", user);
 
         return "redirect:/profile";
     }

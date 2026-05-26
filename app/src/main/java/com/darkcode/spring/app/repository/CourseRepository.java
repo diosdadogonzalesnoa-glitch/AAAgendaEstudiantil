@@ -2,34 +2,19 @@ package com.darkcode.spring.app.repository;
 
 import com.darkcode.spring.app.model.Course;
 import com.darkcode.spring.app.model.User;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Repository
-public class CourseRepository {
+public interface CourseRepository extends JpaRepository<Course, Long> {
 
-    private List<Course> courses = new ArrayList<>();
+    // CURSOS DEL DOCENTE
+    List<Course> findByUser(User user);
 
-    public List<Course> findAll() {
-        return courses;
-    }
+    // CURSOS DEL DOCENTE POR ID
+    List<Course> findByUserId(Long userId);
 
-    // 🔥 FILTRAR POR USUARIO
-    public List<Course> findByUser(User user) {
-        List<Course> result = new ArrayList<>();
+    // BUSCADOR DE CURSOS
+    List<Course> findByNameContainingIgnoreCase(String name);
 
-        for (Course c : courses) {
-            if (c.getUser() != null && c.getUser().getId().equals(user.getId())) {
-                result.add(c);
-            }
-        }
-
-        return result;
-    }
-
-    public void save(Course course) {
-        courses.add(course);
-    }
 }

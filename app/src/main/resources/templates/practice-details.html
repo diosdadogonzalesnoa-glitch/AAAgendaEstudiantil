@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Práctica Calificada</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:'Poppins',sans-serif;
+background:#f5f5f5;
+display:flex;
+color:#111827;
+}
+
+.sidebar{
+width:240px;
+background:white;
+height:100vh;
+padding:20px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+border-right:1px solid #e5e7eb;
+position:fixed;
+left:0;
+top:0;
+}
+
+.logo{
+display:flex;
+gap:10px;
+align-items:center;
+margin-bottom:20px;
+padding-bottom:10px;
+border-bottom:1px solid #eee;
+}
+
+.logo-icon{font-size:32px;}
+
+.logo-text{
+display:flex;
+flex-direction:column;
+line-height:1.1;
+}
+
+.logo-text b{font-size:20px;}
+.logo-text span{font-size:14px;color:#64748b;}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.menu a{
+text-decoration:none;
+color:#64748b;
+padding:10px;
+border-radius:8px;
+display:flex;
+gap:10px;
+align-items:center;
+transition:0.2s;
+}
+
+.menu a:hover{background:#e0e7ff;color:#2563eb;}
+.menu .active{background:#e0e7ff;color:#2563eb;}
+
+.user{
+margin-top:30px;
+border-top:1px solid #eee;
+padding-top:15px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.user-icon{font-size:28px;}
+
+.user-info{
+display:flex;
+flex-direction:column;
+}
+
+.user-info b{font-size:14px;}
+.user-info span{font-size:12px;color:#64748b;}
+
+.logout{
+color:#ef4444;
+text-decoration:none;
+display:block;
+margin-top:10px;
+}
+
+.menu-btn{
+display:none;
+font-size:24px;
+cursor:pointer;
+}
+
+.sidebar-mobile{
+position:fixed;
+left:-260px;
+top:0;
+width:240px;
+height:100%;
+background:white;
+padding:20px;
+transition:0.3s;
+z-index:1000;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
+
+.sidebar-mobile.active{left:0;}
+
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.3);
+display:none;
+z-index:999;
+}
+
+.overlay.active{display:block;}
+
+.main{
+margin-left:240px;
+flex:1;
+padding:30px;
+}
+
+.top{
+display:flex;
+align-items:center;
+gap:14px;
+margin-bottom:25px;
+}
+
+.back-btn{
+width:42px;
+height:42px;
+background:white;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+text-decoration:none;
+color:black;
+border:1px solid #e5e7eb;
+}
+
+.title h1{
+font-size:34px;
+margin-bottom:5px;
+}
+
+.title p{color:#6b7280;}
+
+.info-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+margin-bottom:25px;
+}
+
+.info-card{
+background:white;
+padding:22px;
+border-radius:20px;
+border:1px solid #e5e7eb;
+}
+
+.info-card h2{
+font-size:26px;
+margin-bottom:5px;
+}
+
+.info-card span{
+font-size:14px;
+color:#6b7280;
+}
+
+.practice-box{
+background:white;
+border:1px solid #e5e7eb;
+border-radius:22px;
+overflow:hidden;
+}
+
+.practice-header{
+padding:24px;
+border-bottom:1px solid #e5e7eb;
+background:#fbfbff;
+}
+
+.practice-header h3{
+font-size:24px;
+margin-bottom:8px;
+}
+
+.practice-header p{
+color:#6b7280;
+line-height:1.6;
+}
+
+.question-card{
+padding:25px;
+border-bottom:1px solid #e5e7eb;
+}
+
+.question-card h3{
+font-size:22px;
+margin-bottom:12px;
+}
+
+.question-card p{
+color:#374151;
+line-height:1.6;
+margin-bottom:15px;
+}
+
+.option{
+display:flex;
+align-items:center;
+gap:12px;
+background:#f8fafc;
+border:1px solid #e5e7eb;
+padding:14px;
+border-radius:14px;
+margin-bottom:10px;
+cursor:pointer;
+}
+
+.option:hover{
+background:#eef2ff;
+}
+
+.option input{
+width:18px;
+height:18px;
+}
+
+.written-answer{
+width:100%;
+min-height:140px;
+padding:15px;
+border-radius:14px;
+border:1px solid #d1d5db;
+font-family:'Poppins',sans-serif;
+font-size:15px;
+resize:vertical;
+}
+
+.submit-area{
+padding:25px;
+display:flex;
+justify-content:flex-end;
+background:#fbfbfb;
+}
+
+.submit-btn{
+background:#2563eb;
+color:white;
+border:none;
+padding:15px 22px;
+border-radius:14px;
+font-weight:700;
+font-family:'Poppins',sans-serif;
+cursor:pointer;
+}
+
+.submit-btn:hover{
+background:#1d4ed8;
+}
+
+.sent-box{
+background:white;
+border:1px solid #86efac;
+border-radius:22px;
+padding:35px;
+text-align:center;
+color:#166534;
+}
+
+.sent-box h2{
+font-size:30px;
+margin-bottom:10px;
+}
+
+.grade-box{
+margin-top:18px;
+display:inline-block;
+padding:14px 18px;
+border-radius:14px;
+font-weight:700;
+}
+
+.approved{
+background:#dcfce7;
+color:#166534;
+}
+
+.failed{
+background:#fee2e2;
+color:#b91c1c;
+}
+
+.pending{
+background:#fef3c7;
+color:#b45309;
+}
+
+.empty{
+background:white;
+border:1px solid #e5e7eb;
+border-radius:22px;
+padding:60px 20px;
+text-align:center;
+color:#9ca3af;
+}
+
+@media(max-width:1000px){
+.info-grid{grid-template-columns:1fr;}
+}
+
+@media(max-width:900px){
+.sidebar{display:none;}
+.menu-btn{display:block;}
+
+.main{
+margin-left:0;
+padding:20px;
+}
+
+.title h1{font-size:28px;}
+
+.submit-area{
+justify-content:stretch;
+}
+
+.submit-btn{
+width:100%;
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar-mobile" id="mobileMenu">
+
+<div>
+
+<div class="logo">
+<div class="logo-icon">📘</div>
+<div class="logo-text">
+<b>Agenda</b>
+<span>Estudiantil</span>
+</div>
+</div>
+
+<div class="menu">
+<a href="/dashboard">Dashboard</a>
+<a href="/courses">Cursos</a>
+<a class="active" href="/tasks">Tareas</a>
+<a>Recordatorios</a>
+<a href="/study">Estudio</a>
+<a href="/profile">Mi Perfil</a>
+</div>
+
+</div>
+
+<div>
+<div class="user">
+<div class="user-icon">👤</div>
+<div class="user-info">
+<b th:text="${nombre}"></b>
+<span th:text="${session.user.role == 'DOCENTE' ? 'Docente' : 'Estudiante'}"></span>
+</div>
+</div>
+
+<a href="/logout" class="logout">Cerrar sesión</a>
+</div>
+
+</div>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<div class="sidebar">
+
+<div>
+
+<div class="logo">
+<div class="logo-icon">📘</div>
+<div class="logo-text">
+<b>Agenda</b>
+<span>Estudiantil</span>
+</div>
+</div>
+
+<div class="menu">
+<a href="/dashboard">Dashboard</a>
+<a href="/courses">Cursos</a>
+<a class="active" href="/tasks">Tareas</a>
+<a>Recordatorios</a>
+<a href="/study">Estudio</a>
+<a href="/profile">Mi Perfil</a>
+</div>
+
+</div>
+
+<div>
+<div class="user">
+<div class="user-icon">👤</div>
+<div class="user-info">
+<b th:text="${nombre}"></b>
+<span th:text="${session.user.role == 'DOCENTE' ? 'Docente' : 'Estudiante'}"></span>
+</div>
+</div>
+
+<a href="/logout" class="logout">Cerrar sesión</a>
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="top">
+
+<a href="/tasks" class="back-btn">‹</a>
+
+<div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+<div class="title">
+<h1 th:text="${task.title}">Práctica Calificada</h1>
+<p th:text="${task.course != null ? task.course.name : 'Curso'}">Curso</p>
+</div>
+
+</div>
+
+<div class="info-grid">
+
+<div class="info-card">
+<h2 th:text="${questions != null ? questions.size() : 0}">0</h2>
+<span>Preguntas</span>
+</div>
+
+<div class="info-card">
+<h2>4 pts</h2>
+<span>Valor por pregunta</span>
+</div>
+
+<div class="info-card">
+<h2 th:text="${task.dueDate != null ? task.dueDate : 'Sin fecha'}">Fecha</h2>
+<span>Fecha límite</span>
+</div>
+
+</div>
+
+<div th:if="${submission != null}" class="sent-box">
+
+<h2>✅ Práctica enviada</h2>
+
+<p>Tu respuesta fue registrada correctamente.</p>
+
+<div th:if="${submission.grade != null}"
+class="grade-box"
+th:classappend="${submission.grade >= 12} ? ' approved' : ' failed'">
+
+Nota:
+<span th:text="${submission.grade}"></span>/20
+-
+<span th:text="${submission.grade >= 12} ? 'Aprobado' : 'Desaprobado'"></span>
+
+</div>
+
+<div th:if="${submission.grade == null}"
+class="grade-box pending">
+
+Pendiente de calificación del docente
+
+</div>
+
+</div>
+
+<div th:if="${submission == null and (questions == null or questions.isEmpty())}" class="empty">
+
+<h2>No hay preguntas disponibles</h2>
+<p>Esta práctica todavía no tiene preguntas registradas.</p>
+
+</div>
+
+<form th:if="${submission == null and questions != null and !questions.isEmpty()}"
+th:action="@{'/tasks/submit-practice/' + ${task.id}}"
+method="post"
+onsubmit="return confirm('¿Deseas enviar la práctica? Después de enviarla no podrás modificarla.')">
+
+<div class="practice-box">
+
+<div class="practice-header">
+<h3>📝 Desarrollo de la práctica</h3>
+<p th:text="${task.description}">
+Lee cuidadosamente cada enunciado y responde todas las preguntas.
+</p>
+</div>
+
+<div class="question-card"
+th:each="question : ${questions}">
+
+<h3>
+Pregunta
+<span th:text="${question.questionOrder}"></span>
+</h3>
+
+<p th:text="${question.questionText}">
+Enunciado
+</p>
+
+<div th:if="${question.writtenQuestion}">
+
+<textarea class="written-answer"
+th:name="'answer_' + ${question.id}"
+placeholder="Escribe tu respuesta aquí..."
+required></textarea>
+
+</div>
+
+<div th:if="${!question.writtenQuestion}">
+
+<label class="option"
+th:each="option : ${question.options}">
+
+<input type="radio"
+th:name="'answer_' + ${question.id}"
+th:value="${option.id}"
+required>
+
+<span th:text="${option.optionText}">
+Alternativa
+</span>
+
+</label>
+
+</div>
+
+</div>
+
+<div class="submit-area">
+<button type="submit" class="submit-btn">
+Enviar práctica
+</button>
+</div>
+
+</div>
+
+</form>
+
+</div>
+
+<script>
+function toggleMenu(){
+document.getElementById("mobileMenu").classList.toggle("active");
+document.getElementById("overlay").classList.toggle("active");
+}
+</script>
+
+</body>
+</html>

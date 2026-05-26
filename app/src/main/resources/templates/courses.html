@@ -4,18 +4,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cursos</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
 
 body{
 font-family:'Poppins',sans-serif;
-background:#f1f5f9;
+background:#f5f7fb;
 display:flex;
+color:#111827;
 }
 
-/* SIDEBAR */
 .sidebar{
 width:240px;
 background:white;
@@ -25,6 +30,9 @@ display:flex;
 flex-direction:column;
 justify-content:space-between;
 border-right:1px solid #e5e7eb;
+position:fixed;
+left:0;
+top:0;
 }
 
 .logo{
@@ -55,7 +63,6 @@ font-size:14px;
 color:#64748b;
 }
 
-/* MENU */
 .menu{
 display:flex;
 flex-direction:column;
@@ -66,10 +73,11 @@ gap:10px;
 text-decoration:none;
 color:#64748b;
 padding:10px;
-border-radius:8px;
+border-radius:10px;
 display:flex;
 gap:10px;
 align-items:center;
+transition:0.2s;
 }
 
 .menu a:hover{
@@ -82,7 +90,6 @@ background:#e0e7ff;
 color:#2563eb;
 }
 
-/* USER */
 .user{
 margin-top:30px;
 border-top:1px solid #eee;
@@ -117,81 +124,12 @@ display:block;
 margin-top:10px;
 }
 
-/* MAIN */
-.main{
-flex:1;
-padding:25px;
-}
-
-/* HEADER */
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:20px;
-}
-
-.add-btn{
-background:#2563eb;
-color:white;
-border:none;
-padding:8px 14px;
-border-radius:8px;
-cursor:pointer;
-}
-
-/* FORM */
-.form{
-display:none;
-margin-bottom:20px;
-}
-
-.form input{
-padding:10px;
-margin:5px;
-border-radius:8px;
-border:1px solid #ccc;
-}
-
-.form button{
-background:#22c55e;
-color:white;
-border:none;
-padding:10px;
-border-radius:8px;
-}
-
-/* GRID */
-.courses-container{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-gap:20px;
-}
-
-/* CARD */
-.course-card{
-background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 2px 6px rgba(0,0,0,0.05);
-}
-
-.course-card h3{
-margin-bottom:10px;
-}
-
-.course-card p{
-color:#64748b;
-}
-
-/* MOBILE */
 .menu-btn{
 display:none;
-font-size:22px;
+font-size:24px;
 cursor:pointer;
 }
 
-/* SIDEBAR MOBILE */
 .sidebar-mobile{
 position:fixed;
 left:-260px;
@@ -202,6 +140,9 @@ background:white;
 padding:20px;
 transition:0.3s;
 z-index:1000;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
 }
 
 .sidebar-mobile.active{
@@ -216,13 +157,196 @@ width:100%;
 height:100%;
 background:rgba(0,0,0,0.3);
 display:none;
+z-index:999;
 }
 
 .overlay.active{
 display:block;
 }
 
-/* RESPONSIVE */
+.main{
+margin-left:240px;
+flex:1;
+padding:30px;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.title-section{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.title h1{
+font-size:34px;
+margin-bottom:4px;
+}
+
+.title p{
+color:#6b7280;
+}
+
+.search-box{
+background:white;
+padding:15px;
+border-radius:18px;
+border:1px solid #e5e7eb;
+margin-bottom:25px;
+display:flex;
+gap:10px;
+}
+
+.search-box input{
+flex:1;
+padding:14px;
+border:none;
+outline:none;
+font-family:'Poppins',sans-serif;
+font-size:15px;
+}
+
+.search-box button{
+background:#2563eb;
+color:white;
+border:none;
+padding:14px 18px;
+border-radius:12px;
+cursor:pointer;
+font-weight:600;
+}
+
+.add-btn{
+background:#2563eb;
+color:white;
+border:none;
+padding:14px 18px;
+border-radius:14px;
+cursor:pointer;
+font-weight:600;
+}
+
+.form{
+display:none;
+background:white;
+padding:20px;
+border-radius:20px;
+margin-bottom:25px;
+border:1px solid #e5e7eb;
+}
+
+.form form{
+display:grid;
+grid-template-columns:1fr 1fr 1fr auto;
+gap:10px;
+}
+
+.form input{
+padding:14px;
+border-radius:12px;
+border:1px solid #d1d5db;
+font-family:'Poppins',sans-serif;
+}
+
+.form button{
+background:#22c55e;
+color:white;
+border:none;
+padding:14px;
+border-radius:12px;
+cursor:pointer;
+}
+
+.courses-container{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+gap:22px;
+}
+
+.course-card{
+background:white;
+padding:25px;
+border-radius:24px;
+border:1px solid #e5e7eb;
+transition:0.2s;
+}
+
+.course-card:hover{
+transform:translateY(-3px);
+}
+
+.course-card h2{
+font-size:28px;
+margin-bottom:10px;
+}
+
+.course-card p{
+color:#6b7280;
+margin-bottom:8px;
+}
+
+.actions{
+margin-top:20px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.btn{
+border:none;
+padding:12px 16px;
+border-radius:12px;
+font-family:'Poppins',sans-serif;
+font-weight:600;
+cursor:pointer;
+text-decoration:none;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+}
+
+.view{
+background:#111827;
+color:white;
+}
+
+.edit{
+background:#2563eb;
+color:white;
+}
+
+.delete{
+background:#ef4444;
+color:white;
+}
+
+.join{
+background:#22c55e;
+color:white;
+}
+
+.empty{
+background:white;
+padding:60px 30px;
+border-radius:24px;
+border:1px solid #e5e7eb;
+text-align:center;
+color:#6b7280;
+}
+
+.empty h2{
+font-size:28px;
+margin-bottom:10px;
+color:#111827;
+}
+
 @media(max-width:900px){
 
 .sidebar{
@@ -233,14 +357,33 @@ display:none;
 display:block;
 }
 
+.main{
+margin-left:0;
+padding:20px;
 }
+
+.title h1{
+font-size:28px;
+}
+
+.form form{
+grid-template-columns:1fr;
+}
+
+.courses-container{
+grid-template-columns:1fr;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR MOBILE -->
 <div class="sidebar-mobile" id="mobileMenu">
+
+<div>
 
 <div class="logo">
 <div class="logo-icon">📘</div>
@@ -253,22 +396,32 @@ display:block;
 <div class="menu">
 <a href="/dashboard">Dashboard</a>
 <a class="active" href="/courses">Cursos</a>
-<a>Tareas</a>
+<a href="/tasks">Tareas</a>
 <a>Recordatorios</a>
-<a>Estudio</a>
-
-<!-- 🔥 AQUÍ ESTABA EL ERROR -->
+<a href="/study">Estudio</a>
 <a href="/profile">Mi Perfil</a>
+</div>
 
+</div>
+
+<div>
+
+<div class="user">
+<div class="user-icon">👤</div>
+<div class="user-info">
+<b th:text="${nombre}"></b>
+<span th:text="${session.user.role == 'DOCENTE' ? 'Docente' : 'Estudiante'}"></span>
+</div>
 </div>
 
 <a href="/logout" class="logout">Cerrar sesión</a>
 
 </div>
 
+</div>
+
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
-<!-- SIDEBAR DESKTOP -->
 <div class="sidebar">
 
 <div>
@@ -284,56 +437,209 @@ display:block;
 <div class="menu">
 <a href="/dashboard">Dashboard</a>
 <a class="active" href="/courses">Cursos</a>
-<a>Tareas</a>
+<a href="/tasks">Tareas</a>
 <a>Recordatorios</a>
-<a>Estudio</a>
+<a href="/study">Estudio</a>
 <a href="/profile">Mi Perfil</a>
 </div>
 
 </div>
 
 <div>
+
 <div class="user">
 <div class="user-icon">👤</div>
 <div class="user-info">
 <b th:text="${nombre}"></b>
-<span>Estudiante</span>
+<span th:text="${session.user.role == 'DOCENTE' ? 'Docente' : 'Estudiante'}"></span>
 </div>
 </div>
 
 <a href="/logout" class="logout">Cerrar sesión</a>
-</div>
 
 </div>
 
-<!-- MAIN -->
+</div>
+
 <div class="main">
 
-<div class="header">
-<div style="display:flex;align-items:center;gap:10px;">
+<div class="top">
+
+<div class="title-section">
+
 <div class="menu-btn" onclick="toggleMenu()">☰</div>
-<h2>Cursos</h2>
+
+<div class="title">
+<h1>Cursos</h1>
+<p>Explora y administra tus cursos</p>
 </div>
 
-<button class="add-btn" onclick="toggleForm()">+ Añadir</button>
 </div>
 
-<div class="form" id="form">
-<form action="/courses/add" method="post">
-<input type="text" name="name" placeholder="Nombre del curso" required>
-<input type="text" name="teacher" placeholder="Profesor" required>
-<input type="text" name="schedule" placeholder="Horario" required>
+<button class="add-btn"
+th:if="${session.user.role == 'DOCENTE'}"
+onclick="toggleForm()">
++ Añadir Curso
+</button>
 
-<button type="submit">Guardar</button>
+</div>
+
+<div class="search-box"
+th:if="${session.user.role != 'DOCENTE'}">
+
+<form action="/courses"
+method="get"
+style="display:flex;width:100%;gap:10px;">
+
+<input type="text"
+name="search"
+placeholder="Buscar cursos..."
+th:value="${search}">
+
+<button type="submit">
+Buscar
+</button>
+
 </form>
+
 </div>
 
-<div class="courses-container">
+<div class="form"
+id="form"
+th:if="${session.user.role == 'DOCENTE'}">
 
-<div class="course-card" th:each="c : ${courses}">
-<h3 th:text="${c.name}"></h3>
-<p th:text="${c.teacher}"></p>
-<p th:text="${c.schedule}"></p>
+<form action="/courses/add" method="post">
+
+<input type="text"
+name="name"
+placeholder="Nombre del curso"
+required>
+
+<input type="text"
+name="teacher"
+placeholder="Profesor"
+required>
+
+<input type="text"
+name="schedule"
+placeholder="Horario"
+required>
+
+<button type="submit">
+Guardar
+</button>
+
+</form>
+
+</div>
+
+<div class="form"
+id="editForm"
+th:if="${session.user.role == 'DOCENTE'}">
+
+<form action="/courses/update" method="post">
+
+<input type="hidden"
+name="id"
+id="editId">
+
+<input type="text"
+name="name"
+id="editName"
+required>
+
+<input type="text"
+name="teacher"
+id="editTeacher"
+required>
+
+<input type="text"
+name="schedule"
+id="editSchedule"
+required>
+
+<button type="submit">
+Guardar cambios
+</button>
+
+</form>
+
+</div>
+
+<div class="empty"
+th:if="${session.user.role != 'DOCENTE' and courses != null and courses.isEmpty()}">
+
+<h2>No hay cursos para mostrar</h2>
+
+<p th:if="${searchMode}">
+No se encontraron cursos con ese nombre.
+</p>
+
+<p th:if="${!searchMode}">
+Busca cursos usando el buscador para encontrarlos e inscribirte.
+</p>
+
+</div>
+
+<div class="courses-container"
+th:if="${courses != null and !courses.isEmpty()}">
+
+<div class="course-card"
+th:each="c : ${courses}">
+
+<h2 th:text="${c.name}"></h2>
+
+<p>
+👨‍🏫
+<span th:text="${c.teacher}"></span>
+</p>
+
+<p>
+🕒
+<span th:text="${c.schedule}"></span>
+</p>
+
+<div class="actions">
+
+<div th:if="${session.user.role == 'DOCENTE'}"
+style="display:flex;gap:10px;flex-wrap:wrap;">
+
+<a th:href="@{'/courses/' + ${c.id}}"
+class="btn view">
+Ver
+</a>
+
+<button class="btn edit"
+th:attr="onclick=|editCourse(${c.id}, '${c.name}', '${c.teacher}', '${c.schedule}')|">
+Editar
+</button>
+
+<a th:href="@{'/courses/delete/' + ${c.id}}"
+class="btn delete"
+onclick="return confirm('¿Seguro que deseas eliminar este curso? Se eliminará también de los estudiantes inscritos y no podrán verlo más.');">
+Eliminar
+</a>
+
+</div>
+
+<div th:if="${session.user.role != 'DOCENTE'}"
+style="display:flex;gap:10px;flex-wrap:wrap;">
+
+<a th:if="${searchMode}"
+th:href="@{'/courses/enroll/' + ${c.id}}"
+class="btn join">
+Inscribirme
+</a>
+
+<a th:href="@{'/courses/' + ${c.id}}"
+class="btn view">
+Ver
+</a>
+
+</div>
+
+</div>
+
 </div>
 
 </div>
@@ -341,15 +647,34 @@ display:block;
 </div>
 
 <script>
+
 function toggleMenu(){
 document.getElementById("mobileMenu").classList.toggle("active");
 document.getElementById("overlay").classList.toggle("active");
 }
 
 function toggleForm(){
-let form=document.getElementById("form");
-form.style.display=form.style.display==="none"?"block":"none";
+
+let form = document.getElementById("form");
+
+form.style.display =
+form.style.display === "block"
+? "none"
+: "block";
+
 }
+
+function editCourse(id, name, teacher, schedule){
+
+document.getElementById("editForm").style.display = "block";
+
+document.getElementById("editId").value = id;
+document.getElementById("editName").value = name;
+document.getElementById("editTeacher").value = teacher;
+document.getElementById("editSchedule").value = schedule;
+
+}
+
 </script>
 
 </body>

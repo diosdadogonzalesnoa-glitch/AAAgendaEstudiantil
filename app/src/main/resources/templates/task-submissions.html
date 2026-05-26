@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entregas</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:'Poppins',sans-serif;
+background:#f5f5f5;
+display:flex;
+color:#111827;
+}
+
+.sidebar{
+width:240px;
+background:white;
+height:100vh;
+padding:20px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+border-right:1px solid #e5e7eb;
+position:fixed;
+left:0;
+top:0;
+}
+
+.logo{
+display:flex;
+gap:10px;
+align-items:center;
+margin-bottom:20px;
+padding-bottom:10px;
+border-bottom:1px solid #eee;
+}
+
+.logo-icon{font-size:32px;}
+
+.logo-text{
+display:flex;
+flex-direction:column;
+line-height:1.1;
+}
+
+.logo-text b{font-size:20px;}
+.logo-text span{font-size:14px;color:#64748b;}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.menu a{
+text-decoration:none;
+color:#64748b;
+padding:10px;
+border-radius:8px;
+display:flex;
+gap:10px;
+align-items:center;
+transition:0.2s;
+}
+
+.menu a:hover{background:#e0e7ff;color:#2563eb;}
+.menu .active{background:#e0e7ff;color:#2563eb;}
+
+.user{
+margin-top:30px;
+border-top:1px solid #eee;
+padding-top:15px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.user-icon{font-size:28px;}
+
+.user-info{
+display:flex;
+flex-direction:column;
+}
+
+.user-info b{font-size:14px;}
+.user-info span{font-size:12px;color:#64748b;}
+
+.logout{
+color:#ef4444;
+text-decoration:none;
+display:block;
+margin-top:10px;
+}
+
+.menu-btn{
+display:none;
+font-size:24px;
+cursor:pointer;
+}
+
+.sidebar-mobile{
+position:fixed;
+left:-260px;
+top:0;
+width:240px;
+height:100%;
+background:white;
+padding:20px;
+transition:0.3s;
+z-index:1000;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
+
+.sidebar-mobile.active{left:0;}
+
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.3);
+display:none;
+z-index:999;
+}
+
+.overlay.active{display:block;}
+
+.main{
+margin-left:240px;
+flex:1;
+padding:30px;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.top-left{
+display:flex;
+align-items:center;
+gap:14px;
+}
+
+.back-btn{
+width:42px;
+height:42px;
+background:white;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+text-decoration:none;
+color:black;
+border:1px solid #e5e7eb;
+}
+
+.title h1{
+font-size:34px;
+margin-bottom:5px;
+}
+
+.title p{color:#6b7280;}
+
+.info-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+margin-bottom:30px;
+}
+
+.info-card{
+background:white;
+padding:25px;
+border-radius:20px;
+border:1px solid #e5e7eb;
+}
+
+.info-card h2{
+font-size:34px;
+margin-bottom:6px;
+}
+
+.info-card span{color:#6b7280;}
+
+.box{
+background:white;
+border-radius:20px;
+border:1px solid #e5e7eb;
+overflow:hidden;
+margin-bottom:30px;
+}
+
+.box-header{
+padding:22px;
+border-bottom:1px solid #e5e7eb;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.box-header h3{font-size:22px;}
+
+.empty{
+padding:60px 20px;
+text-align:center;
+color:#9ca3af;
+}
+
+.submission{
+padding:25px;
+border-bottom:1px solid #e5e7eb;
+display:flex;
+justify-content:space-between;
+gap:20px;
+}
+
+.submission-left{flex:1;}
+
+.submission-left h2{
+font-size:28px;
+margin-bottom:10px;
+}
+
+.submission-left p{
+color:#4b5563;
+margin-bottom:14px;
+white-space:pre-line;
+}
+
+.submission-info{
+display:flex;
+gap:16px;
+flex-wrap:wrap;
+font-size:14px;
+color:#6b7280;
+margin-bottom:15px;
+}
+
+.written-summary{
+background:#fef3c7;
+border:1px solid #fde68a;
+color:#92400e;
+border-radius:14px;
+padding:15px;
+margin-top:15px;
+white-space:pre-line;
+}
+
+.files-box{
+background:#f8fafc;
+border:1px solid #e5e7eb;
+border-radius:14px;
+padding:15px;
+margin-top:15px;
+}
+
+.files-box h4{margin-bottom:10px;}
+
+.file-item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 0;
+border-bottom:1px solid #e5e7eb;
+gap:10px;
+}
+
+.file-item:last-child{border-bottom:none;}
+
+.file-item span{word-break:break-all;}
+
+.download-btn{
+background:#2563eb;
+color:white;
+text-decoration:none;
+padding:10px 14px;
+border-radius:10px;
+font-size:14px;
+font-weight:600;
+}
+
+.practice-answers{
+margin-top:18px;
+background:#f8fafc;
+border:1px solid #e5e7eb;
+border-radius:16px;
+padding:18px;
+}
+
+.practice-answer{
+padding:15px;
+border-bottom:1px solid #dbe3ea;
+}
+
+.practice-answer:last-child{border-bottom:none;}
+
+.practice-answer h4{
+margin-bottom:10px;
+font-size:18px;
+}
+
+.answer-result{
+margin-top:10px;
+display:inline-block;
+padding:8px 12px;
+border-radius:999px;
+font-size:13px;
+font-weight:700;
+}
+
+.correct{
+background:#dcfce7;
+color:#166534;
+}
+
+.incorrect{
+background:#fee2e2;
+color:#b91c1c;
+}
+
+.written{
+background:#e0e7ff;
+color:#1d4ed8;
+}
+
+.submission-right{
+display:flex;
+flex-direction:column;
+gap:12px;
+align-items:flex-end;
+min-width:240px;
+}
+
+.grade-box{
+background:#f8fafc;
+border:1px solid #e5e7eb;
+border-radius:16px;
+padding:18px;
+width:100%;
+}
+
+.grade-box h4{margin-bottom:12px;}
+
+.grade-box form{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.grade-box input{
+padding:14px;
+border-radius:12px;
+border:1px solid #d1d5db;
+font-family:'Poppins',sans-serif;
+font-size:15px;
+}
+
+.grade-btn{
+background:#2563eb;
+color:white;
+border:none;
+padding:14px;
+border-radius:12px;
+font-weight:700;
+cursor:pointer;
+font-family:'Poppins',sans-serif;
+}
+
+.final-grade{
+padding:14px;
+border-radius:14px;
+font-weight:700;
+text-align:center;
+}
+
+.approved{
+background:#dcfce7;
+color:#166534;
+}
+
+.failed{
+background:#fee2e2;
+color:#b91c1c;
+}
+
+.pending{
+background:#fef3c7;
+color:#b45309;
+}
+
+.pending-list{padding:25px;}
+
+.pending-student{
+padding:14px 0;
+border-bottom:1px solid #e5e7eb;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+}
+
+.pending-student:last-child{border-bottom:none;}
+
+.pending-grade{
+background:#fee2e2;
+color:#b91c1c;
+border:1px solid #fecaca;
+padding:10px 14px;
+border-radius:12px;
+font-weight:700;
+display:inline-block;
+}
+
+.practice-badge{
+background:#ede9fe;
+color:#7c3aed;
+padding:10px 14px;
+border-radius:999px;
+font-size:13px;
+font-weight:700;
+display:inline-block;
+}
+
+@media(max-width:1000px){
+.info-grid{grid-template-columns:1fr;}
+
+.submission{flex-direction:column;}
+
+.submission-right{
+align-items:stretch;
+min-width:100%;
+}
+}
+
+@media(max-width:900px){
+.sidebar{display:none;}
+.menu-btn{display:block;}
+
+.main{
+margin-left:0;
+padding:20px;
+}
+
+.title h1{font-size:28px;}
+.submission-left h2{font-size:24px;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar-mobile" id="mobileMenu">
+
+<div>
+
+<div class="logo">
+<div class="logo-icon">📘</div>
+
+<div class="logo-text">
+<b>Agenda</b>
+<span>Estudiantil</span>
+</div>
+
+</div>
+
+<div class="menu">
+<a href="/dashboard">Dashboard</a>
+<a href="/courses">Cursos</a>
+<a class="active" href="/tasks">Tareas</a>
+<a>Recordatorios</a>
+<a href="/study">Estudio</a>
+<a href="/profile">Mi Perfil</a>
+</div>
+
+</div>
+
+<div>
+
+<div class="user">
+<div class="user-icon">👤</div>
+
+<div class="user-info">
+<b th:text="${nombre}"></b>
+<span>Docente</span>
+</div>
+
+</div>
+
+<a href="/logout" class="logout">
+Cerrar sesión
+</a>
+
+</div>
+
+</div>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<div class="sidebar">
+
+<div>
+
+<div class="logo">
+<div class="logo-icon">📘</div>
+
+<div class="logo-text">
+<b>Agenda</b>
+<span>Estudiantil</span>
+</div>
+
+</div>
+
+<div class="menu">
+<a href="/dashboard">Dashboard</a>
+<a href="/courses">Cursos</a>
+<a class="active" href="/tasks">Tareas</a>
+<a>Recordatorios</a>
+<a href="/study">Estudio</a>
+<a href="/profile">Mi Perfil</a>
+</div>
+
+</div>
+
+<div>
+
+<div class="user">
+<div class="user-icon">👤</div>
+
+<div class="user-info">
+<b th:text="${nombre}"></b>
+<span>Docente</span>
+</div>
+
+</div>
+
+<a href="/logout" class="logout">
+Cerrar sesión
+</a>
+
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="top">
+
+<div class="top-left">
+
+<a href="/tasks" class="back-btn">
+‹
+</a>
+
+<div class="menu-btn" onclick="toggleMenu()">
+☰
+</div>
+
+<div class="title">
+
+<h1 th:text="${task.title}">
+Actividad
+</h1>
+
+<p th:text="${task.course != null ? task.course.name : 'Curso'}">
+Curso
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="info-grid">
+
+<div class="info-card">
+<h2 th:text="${submissions != null ? submissions.size() : 0}">
+0
+</h2>
+<span>Entregas recibidas</span>
+</div>
+
+<div class="info-card">
+<h2 th:text="${pendingStudents != null ? pendingStudents.size() : 0}">
+0
+</h2>
+<span>Sin entregar</span>
+</div>
+
+<div class="info-card">
+
+<div th:if="${task.taskType == 'PRACTICA'}" class="practice-badge">
+📝 Práctica calificada
+</div>
+
+<h2 th:if="${task.taskType != 'PRACTICA'}"
+th:text="${task.priority}">
+MEDIA
+</h2>
+
+<span>Tipo de actividad</span>
+
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="box-header">
+
+<h3>
+✅ Entregas recibidas
+</h3>
+
+<span th:text="${submissions != null ? submissions.size() + ' entrega(s)' : '0 entregas'}">
+0 entregas
+</span>
+
+</div>
+
+<div class="empty"
+th:if="${submissions == null or submissions.isEmpty()}">
+
+<h2 style="margin-bottom:10px;">
+Nadie entregó todavía
+</h2>
+
+<p>
+Cuando los estudiantes envíen sus respuestas aparecerán aquí.
+</p>
+
+</div>
+
+<div class="submission"
+th:each="submission : ${submissions}">
+
+<div class="submission-left">
+
+<h2 th:text="${submission.student.name}">
+Estudiante
+</h2>
+
+<div class="submission-info">
+
+<span>
+📅
+<span th:text="${submission.submittedAt}"></span>
+</span>
+
+</div>
+
+<div class="written-summary"
+th:if="${submission.answerText != null 
+and !submission.answerText.isEmpty()
+and (practiceAnswersMap == null 
+or practiceAnswersMap.get(submission.id) == null 
+or practiceAnswersMap.get(submission.id).isEmpty())}">
+
+<span th:text="${submission.answerText}"></span>
+
+</div>
+
+<div class="written-summary"
+th:if="${submission.answerText != null 
+and !submission.answerText.isEmpty()
+and practiceAnswersMap != null 
+and practiceAnswersMap.get(submission.id) != null 
+and !practiceAnswersMap.get(submission.id).isEmpty()
+and #lists.contains(practiceAnswersMap.get(submission.id).![question.writtenQuestion], true)}">
+
+<span th:text="${submission.answerText}"></span>
+
+</div>
+
+<div class="practice-answers"
+th:if="${practiceAnswersMap != null
+and practiceAnswersMap.get(submission.id) != null
+and !practiceAnswersMap.get(submission.id).isEmpty()}">
+
+<div class="practice-answer"
+th:each="answer : ${practiceAnswersMap.get(submission.id)}">
+
+<h4>
+Pregunta
+<span th:text="${answer.question.questionOrder}"></span>
+</h4>
+
+<p th:text="${answer.question.questionText}"></p>
+
+<div th:if="${answer.question.writtenQuestion}">
+
+<p>
+<b>Respuesta escrita:</b>
+</p>
+
+<p th:text="${answer.writtenAnswer}"></p>
+
+<div class="answer-result written">
+Respuesta manual
+</div>
+
+</div>
+
+<div th:if="${!answer.question.writtenQuestion}">
+
+<p>
+<b>Alternativa marcada:</b>
+<span th:text="${answer.selectedOption != null ? answer.selectedOption.optionText : 'Sin responder'}"></span>
+</p>
+
+<div class="answer-result"
+th:classappend="${answer.correct} ? ' correct' : ' incorrect'">
+
+<span th:text="${answer.correct} ? 'Correcto' : 'Incorrecto'">
+Resultado
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="files-box"
+th:if="${submissionFiles != null
+and submissionFiles.get(submission.id) != null
+and !submissionFiles.get(submission.id).isEmpty()}">
+
+<h4>
+📎 Archivos enviados
+</h4>
+
+<div class="file-item"
+th:each="file : ${submissionFiles.get(submission.id)}">
+
+<span th:text="${file.originalName}">
+archivo.pdf
+</span>
+
+<a class="download-btn"
+th:href="@{'/tasks/download/' + ${file.storedName}}">
+Descargar
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="submission-right">
+
+<div class="grade-box">
+
+<h4>
+Calificación
+</h4>
+
+<div th:if="${submission.grade == null}">
+
+<form th:action="@{'/tasks/grade/' + ${submission.id}}"
+method="post">
+
+<input type="number"
+name="grade"
+min="0"
+max="20"
+placeholder="Nota del 0 al 20"
+required>
+
+<button type="submit"
+class="grade-btn">
+
+Guardar nota
+
+</button>
+
+</form>
+
+</div>
+
+<div th:if="${submission.grade != null}"
+class="final-grade"
+th:classappend="${submission.grade >= 12} ? ' approved' : ' failed'">
+
+<span th:text="${submission.grade}"></span>/20
+
+-
+
+<span th:text="${submission.grade >= 12} ? 'Aprobado' : 'Desaprobado'">
+Estado
+</span>
+
+</div>
+
+<div th:if="${submission.grade == null}"
+class="final-grade pending"
+style="margin-top:15px;">
+
+Pendiente de calificación
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="box-header">
+
+<h3>
+❌ Sin entregar
+</h3>
+
+<span th:text="${pendingStudents != null ? pendingStudents.size() + ' sin entregar' : '0 sin entregar'}">
+0 sin entregar
+</span>
+
+</div>
+
+<div class="empty"
+th:if="${pendingStudents == null or pendingStudents.isEmpty()}">
+
+<h2 style="margin-bottom:10px;">
+Todos entregaron
+</h2>
+
+<p>
+No hay estudiantes pendientes por entregar.
+</p>
+
+</div>
+
+<div class="pending-list"
+th:if="${pendingStudents != null and !pendingStudents.isEmpty()}">
+
+<div class="pending-student"
+th:each="student : ${pendingStudents}">
+
+<span th:text="${student.name}">
+Estudiante
+</span>
+
+<span class="pending-grade">
+0/20 - Desaprobado
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+function toggleMenu(){
+document.getElementById("mobileMenu").classList.toggle("active");
+document.getElementById("overlay").classList.toggle("active");
+}
+</script>
+
+</body>
+</html>
