@@ -543,6 +543,363 @@ padding:20px;
 .top h1{font-size:30px;}
 .question-box h3{font-size:22px;}
 }
+
+
+/* ===================================================== */
+/* RESPONSIVE EXTRA - NO TOCAR FUNCIONES DEL TEMPORIZADOR */
+/* ===================================================== */
+html, body{
+max-width:100%;
+overflow-x:hidden;
+}
+
+.main,
+.timer-box,
+.teacher-panel,
+.stats-panel,
+.side-box,
+.question-box{
+max-width:100%;
+}
+
+.timer-header h2,
+.teacher-panel h2,
+.stats-header h2,
+.top h1,
+.question-box h3,
+.course-name-title{
+overflow-wrap:anywhere;
+word-break:normal;
+}
+
+.stats-table-wrap,
+.teacher-table{
+width:100%;
+max-width:100%;
+overflow-x:auto;
+-webkit-overflow-scrolling:touch;
+}
+
+.stats-table-wrap::-webkit-scrollbar,
+.teacher-table::-webkit-scrollbar{
+height:8px;
+}
+
+.stats-table-wrap::-webkit-scrollbar-thumb,
+.teacher-table::-webkit-scrollbar-thumb{
+background:#cbd5e1;
+border-radius:999px;
+}
+
+.teacher-panel{
+overflow:hidden;
+}
+
+.teacher-course-buttons{
+max-width:100%;
+}
+
+.teacher-course-btn{
+white-space:nowrap;
+}
+
+@media(max-width:1100px){
+
+.main{
+width:100%;
+}
+
+.grid{
+grid-template-columns:1fr;
+}
+
+.side{
+grid-template-columns:1fr 1fr;
+display:grid;
+}
+
+.stats-table{
+min-width:760px;
+}
+
+}
+
+@media(max-width:900px){
+
+body{
+display:block;
+}
+
+.sidebar{
+display:none;
+}
+
+.menu-btn{
+display:block;
+flex-shrink:0;
+}
+
+.main{
+margin-left:0;
+width:100%;
+padding:18px;
+}
+
+.top{
+align-items:flex-start;
+}
+
+.top h1{
+font-size:30px;
+line-height:1.2;
+}
+
+.timer-box,
+.teacher-panel,
+.stats-panel{
+border-radius:22px;
+}
+
+.timer-box{
+padding:22px;
+}
+
+.timer-header h2{
+font-size:26px;
+}
+
+.timer-header p,
+.teacher-panel .teacher-subtitle,
+.stats-header p{
+font-size:14px;
+}
+
+.timer-display{
+padding:36px 12px;
+border-radius:24px;
+}
+
+.timer-display h1{
+font-size:44px;
+letter-spacing:2px;
+}
+
+.selects select{
+font-size:14px;
+padding:15px;
+width:100%;
+}
+
+.message{
+font-size:14px;
+padding:15px;
+}
+
+.big-btn{
+font-size:18px;
+padding:17px;
+letter-spacing:1px;
+}
+
+.question-box{
+padding:20px;
+}
+
+.question-box h3{
+font-size:20px;
+line-height:1.4;
+}
+
+.option{
+padding:14px;
+gap:10px;
+}
+
+.side{
+grid-template-columns:1fr;
+}
+
+.side-box{
+padding:20px;
+}
+
+.side-box h3{
+font-size:20px;
+}
+
+.big-stat{
+font-size:38px;
+}
+
+.stats-header{
+padding:22px;
+}
+
+.stats-header h2{
+font-size:24px;
+}
+
+.stats-table{
+min-width:680px;
+}
+
+.stats-table th{
+padding:16px 18px;
+font-size:12px;
+}
+
+.stats-table td{
+padding:18px;
+font-size:15px;
+}
+
+.course-name-title{
+font-size:16px;
+}
+
+.teacher-panel{
+padding:22px;
+}
+
+.teacher-panel h2{
+font-size:26px;
+line-height:1.25;
+}
+
+.teacher-course-buttons{
+justify-content:flex-start;
+flex-wrap:nowrap;
+overflow-x:auto;
+padding-bottom:8px;
+}
+
+.teacher-course-btn{
+flex:0 0 auto;
+font-size:14px;
+padding:12px 18px;
+min-width:auto;
+}
+
+.student-name-cell{
+align-items:flex-start;
+}
+
+}
+
+@media(max-width:520px){
+
+.main{
+padding:14px;
+}
+
+.top h1{
+font-size:26px;
+}
+
+.timer-box,
+.teacher-panel,
+.stats-panel{
+border-radius:20px;
+}
+
+.timer-box{
+padding:18px;
+}
+
+.timer-header h2{
+font-size:22px;
+}
+
+.timer-display{
+padding:30px 8px;
+}
+
+.timer-display h1{
+font-size:34px;
+letter-spacing:1px;
+}
+
+.question-box{
+padding:16px;
+}
+
+.question-box h3{
+font-size:18px;
+}
+
+.question-box textarea{
+min-height:140px;
+font-size:14px;
+}
+
+.option span{
+font-size:14px;
+}
+
+.big-btn{
+font-size:16px;
+border-radius:16px;
+}
+
+.stats-header{
+padding:18px;
+}
+
+.stats-header h2{
+font-size:21px;
+}
+
+.stats-table{
+min-width:600px;
+}
+
+.stats-table th{
+padding:14px 12px;
+font-size:11px;
+}
+
+.stats-table td{
+padding:15px 12px;
+font-size:14px;
+}
+
+.course-name-cell,
+.student-name-cell{
+gap:10px;
+}
+
+.course-name-title{
+font-size:14px;
+}
+
+.teacher-panel{
+padding:18px;
+}
+
+.teacher-panel h2{
+font-size:22px;
+}
+
+.teacher-panel .teacher-subtitle{
+font-size:13px;
+}
+
+.student-avatar-mini{
+width:34px;
+height:34px;
+font-size:13px;
+}
+
+.empty-stats{
+padding:35px 16px;
+}
+
+.empty-stats h3{
+font-size:20px;
+}
+
+}
+
 </style>
 </head>
 

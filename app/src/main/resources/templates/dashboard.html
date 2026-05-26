@@ -239,44 +239,62 @@ margin-bottom:20px;
 .chart-wrapper{
 width:100%;
 overflow-x:auto;
-padding-bottom:8px;
+padding:10px 0 8px 0;
 }
 
 .chart{
-height:250px;
+height:280px;
 min-width:520px;
 display:flex;
 align-items:flex-end;
-gap:28px;
-border-left:2px solid #d1d5db;
-border-bottom:2px solid #d1d5db;
-padding:0 20px 28px 20px;
+gap:26px;
+border-left:3px solid #cbd5e1;
+border-bottom:3px solid #cbd5e1;
+padding:20px 20px 35px 28px;
 position:relative;
-background:
-linear-gradient(to top, transparent 24%, #e5e7eb 25%, transparent 26%),
-linear-gradient(to top, transparent 49%, #e5e7eb 50%, transparent 51%),
-linear-gradient(to top, transparent 74%, #e5e7eb 75%, transparent 76%),
-linear-gradient(to right, transparent 24%, #e5e7eb 25%, transparent 26%),
-linear-gradient(to right, transparent 49%, #e5e7eb 50%, transparent 51%),
-linear-gradient(to right, transparent 74%, #e5e7eb 75%, transparent 76%);
-background-size:100% 100%;
+background-image:
+linear-gradient(to top, rgba(203,213,225,0.5) 1px, transparent 1px);
+background-size:100% 25%;
+background-position:left bottom;
+border-radius:8px;
 }
 
 .y-labels{
 position:absolute;
-left:-18px;
-top:0;
-height:220px;
+left:-12px;
+top:8px;
+height:235px;
 display:flex;
 flex-direction:column;
 justify-content:space-between;
-font-size:13px;
+font-size:14px;
+font-weight:600;
 color:#64748b;
+}
+
+.y-title{
+position:absolute;
+left:-64px;
+top:112px;
+font-size:14px;
+font-weight:600;
+color:#475569;
+transform:rotate(-90deg);
+}
+
+.x-title{
+position:absolute;
+bottom:-66px;
+left:50%;
+transform:translateX(-50%);
+font-size:14px;
+font-weight:600;
+color:#475569;
 }
 
 .bar-item{
 height:220px;
-min-width:70px;
+min-width:78px;
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -285,30 +303,34 @@ position:relative;
 }
 
 .bar{
-width:54px;
-min-height:4px;
-background:#3b82f6;
-border-radius:6px 6px 0 0;
+width:64px;
+min-height:6px;
+background:linear-gradient(180deg,#60a5fa 0%,#3b82f6 100%);
+border-radius:10px 10px 0 0;
 transition:0.3s;
+box-shadow:0 4px 10px rgba(59,130,246,0.25);
 }
 
 .bar:hover{
-background:#2563eb;
+background:linear-gradient(180deg,#3b82f6 0%,#2563eb 100%);
+transform:translateY(-3px);
 }
 
 .bar-value{
-font-size:12px;
+font-size:13px;
 font-weight:700;
 color:#2563eb;
-margin-bottom:6px;
+margin-bottom:7px;
 }
 
 .bar-label{
 position:absolute;
-bottom:-25px;
+bottom:-30px;
 font-size:13px;
-color:#475569;
-font-weight:500;
+color:#334155;
+font-weight:600;
+text-align:center;
+width:90px;
 }
 
 .empty-chart{
@@ -448,7 +470,6 @@ min-width:560px;
 }
 
 }
-
 </style>
 </head>
 
@@ -585,7 +606,7 @@ min-width:560px;
 
 <div class="box">
 
-<h3>Tiempo de estudio por curso</h3>
+<h3>↗ Tiempo de estudio por curso</h3>
 
 <div class="empty-chart"
 th:if="${courseStudyChart == null or courseStudyChart.isEmpty()}">
@@ -596,7 +617,7 @@ No hay cursos para mostrar.
 th:if="${courseStudyChart != null and !courseStudyChart.isEmpty()}">
 
 <div class="chart"
-th:style="'min-width:' + (${courseStudyChart.size()} * 95 + 120) + 'px'">
+th:style="'min-width:' + (${courseStudyChart.size()} * 105 + 140) + 'px'">
 
 <div class="y-labels">
 <span>8</span>
@@ -604,6 +625,14 @@ th:style="'min-width:' + (${courseStudyChart.size()} * 95 + 120) + 'px'">
 <span>4</span>
 <span>2</span>
 <span>0</span>
+</div>
+
+<div class="y-title">
+Horas
+</div>
+
+<div class="x-title">
+Cursos
 </div>
 
 <div class="bar-item"
@@ -634,7 +663,7 @@ CURSO
 
 <div class="box">
 
-<h3>Tareas</h3>
+<h3>📋 Tareas</h3>
 
 <div th:if="${upcomingTasks == null or upcomingTasks.isEmpty()}" class="empty">
 No hay tareas registradas.

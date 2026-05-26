@@ -349,6 +349,30 @@ public class TaskController {
         return "task-submissions";
     }
 
+    @PostMapping("/tasks/grade/{id}")
+    public String gradeSubmission(@PathVariable Long id,
+                                  @RequestParam Integer grade,
+                                  HttpSession session) {
+
+        User user = (User) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        if (!"DOCENTE".equals(user.getRole())) {
+            return "redirect:/tasks";
+        }
+
+        Long taskId = submissionService.gradeSubmission(id, grade);
+
+        if (taskId != null) {
+            return "redirect:/tasks/submissions/" + taskId;
+        }
+
+        return "redirect:/tasks";
+    }
+
     @GetMapping("/tasks/download/{storedName}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String storedName) {
 

@@ -49,7 +49,13 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
+
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin())
+                )
+
                 .authenticationProvider(authenticationProvider())
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
@@ -72,10 +78,12 @@ public class SecurityConfig {
 
                         .anyRequest().authenticated()
                 )
+
                 .formLogin(form -> form
                         .loginPage("/login")
                         .disable()
                 )
+
                 .logout(logout -> logout
                         .logoutUrl("/security-logout")
                         .logoutSuccessUrl("/login")

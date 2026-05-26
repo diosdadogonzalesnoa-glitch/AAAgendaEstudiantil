@@ -1,6 +1,7 @@
 package com.darkcode.spring.app.controller;
 
 import com.darkcode.spring.app.model.Course;
+import com.darkcode.spring.app.model.Lesson;
 import com.darkcode.spring.app.model.Submission;
 import com.darkcode.spring.app.model.Task;
 import com.darkcode.spring.app.model.User;
@@ -203,7 +204,7 @@ public class CourseController {
             return "redirect:/courses";
         }
 
-        Object lesson = lessonService.getLessonById(lessonId);
+        Lesson lesson = lessonService.getLessonById(lessonId);
 
         if (lesson == null) {
             return "redirect:/courses/" + courseId;
@@ -243,12 +244,15 @@ public class CourseController {
 
         try {
             Path filePath =
-                    lessonService.getUploadPath().resolve(storedName).normalize();
+                    lessonService.getUploadPath()
+                            .resolve(storedName)
+                            .normalize()
+                            .toAbsolutePath();
 
             Resource resource =
                     new UrlResource(filePath.toUri());
 
-            if (!resource.exists()) {
+            if (!resource.exists() || !resource.isReadable()) {
                 return ResponseEntity.notFound().build();
             }
 
@@ -262,9 +266,12 @@ public class CourseController {
                             .replace("+", "%20");
 
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "inline; filename*=UTF-8''" + encodedFileName)
+                    .header(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            "inline; filename*=UTF-8''" + encodedFileName
+                    )
                     .header(HttpHeaders.CONTENT_TYPE, "application/pdf")
+                    .header("X-Content-Type-Options", "nosniff")
                     .body(resource);
 
         } catch (Exception e) {
