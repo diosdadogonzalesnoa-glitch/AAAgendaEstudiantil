@@ -1,0 +1,35 @@
+<div class="top">
+  <a [routerLink]="['/alumno/cursos', course?.id]" class="back-btn">‹</a>
+  <div class="title">
+    <h1>{{ lesson?.title ?? 'Clase' }}</h1>
+    <p>{{ course?.name ?? 'Curso' }}</p>
+  </div>
+</div>
+
+@if (lesson) {
+  <div class="info-grid">
+    <div class="info-card">
+      <h2>{{ lesson.title }}</h2>
+      <span>Título de la clase</span>
+    </div>
+    <div class="info-card">
+      <h2>{{ lesson.originalFileName }}</h2>
+      <span>Material PDF</span>
+    </div>
+    <div class="info-card">
+      <h2>{{ lesson.lessonDate ?? '—' }}</h2>
+      <span>Fecha de publicación</span>
+    </div>
+  </div>
+
+  <div class="viewer-box">
+    <div class="viewer-header">
+      <div>
+        <h3>📘 Vista previa del material</h3>
+        <p>{{ lesson.description }}</p>
+      </div>
+      <a class="open-btn" [href]="pdfUrl" target="_blank">Abrir PDF</a>
+    </div>
+    <iframe class="pdf-frame" [src]="pdfUrl"></iframe>
+  </div>
+}

@@ -1,0 +1,392 @@
+$accent:       #7c3aed;
+$accent-dark:  #6d28d9;
+$accent-light: #ede9fe;
+$border:       #e5e7eb;
+$text:         #111827;
+$muted:        #6b7280;
+$bg-card:      #ffffff;
+$danger:       #ef4444;
+$danger-light: #fee2e2;
+
+/* ── Header ────────────────────────────────────────────────────── */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 28px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.title-section { display: flex; align-items: center; gap: 12px; }
+
+.title {
+  h1 { font-size: 22px; font-weight: 800; color: $text; margin-bottom: 3px; }
+  p  { font-size: 13px; color: $muted; }
+}
+
+/* ── Add Button ────────────────────────────────────────────────── */
+.add-btn {
+  background: $accent;
+  color: white;
+  border: none;
+  padding: 11px 22px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s, transform 0.15s;
+  white-space: nowrap;
+
+  &:hover { background: $accent-dark; transform: translateY(-1px); }
+}
+
+/* ── Form Card ─────────────────────────────────────────────────── */
+.form-card {
+  background: $bg-card;
+  border: 1px solid $border;
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 28px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+
+  h3 {
+    font-size: 16px; font-weight: 700; color: $text; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 8px;
+    i { color: $accent; }
+  }
+
+  form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  input {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1.5px solid $border;
+    font-family: inherit;
+    font-size: 14px;
+    color: $text;
+    transition: border-color 0.2s;
+
+    &:focus { outline: none; border-color: $accent; box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+    &::placeholder { color: #9ca3af; }
+  }
+}
+
+.field-readonly {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid $border;
+  background: #f9fafb;
+
+  .field-label {
+    font-size: 10px; color: #9ca3af; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 2px;
+  }
+  .field-value { font-size: 14px; color: $text; font-weight: 600; }
+}
+
+.schedule-selects {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+
+  select {
+    padding: 12px 10px;
+    border-radius: 10px;
+    border: 1.5px solid $border;
+    font-family: inherit;
+    font-size: 14px;
+    background: $bg-card;
+    color: $text;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    &:focus { outline: none; border-color: $accent; }
+  }
+}
+
+.form-actions {
+  grid-column: span 2;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-cancel {
+  background: #f3f4f6; color: $muted; border: none;
+  padding: 11px 20px; border-radius: 10px; cursor: pointer;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  &:hover { background: #e5e7eb; }
+}
+
+.btn-submit {
+  background: $accent; color: white; border: none;
+  padding: 11px 24px; border-radius: 10px; cursor: pointer;
+  font-family: inherit; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; gap: 7px;
+  transition: background 0.2s;
+  &:hover:not(:disabled) { background: $accent-dark; }
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+/* ── Grid ──────────────────────────────────────────────────────── */
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 24px;
+}
+
+/* ── Card ──────────────────────────────────────────────────────── */
+.course-card {
+  background: $bg-card;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
+  transition: box-shadow 0.25s, transform 0.25s;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+    transform: translateY(-5px);
+  }
+
+  &.finished {
+    .card-banner { filter: grayscale(0.55) brightness(0.95); }
+    .course-name { color: $muted; }
+    .btn-view { background: #9ca3af; &:hover { background: #6b7280; } }
+  }
+}
+
+/* ── Banner ────────────────────────────────────────────────────── */
+.card-banner {
+  position: relative;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Status badge — top left */
+.banner-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.15s, transform 0.15s;
+  z-index: 2;
+
+  &:hover { opacity: 0.88; transform: scale(0.97); }
+
+  &.badge-active { background: rgba(255,255,255,0.95); color: #16a34a; }
+  &.badge-done   { background: rgba(255,255,255,0.78); color: #6b7280; }
+
+  i { font-size: 10px; }
+}
+
+/* Edit / Delete — top right, overlaid on banner */
+.banner-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.course-card:hover .banner-actions { opacity: 1; }
+
+.baction-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: transform 0.15s, background 0.15s;
+  backdrop-filter: blur(4px);
+
+  &:hover { transform: scale(1.1); }
+
+  &.edit {
+    background: rgba(255,255,255,0.9);
+    color: $accent;
+    &:hover { background: white; }
+  }
+  &.del {
+    background: rgba(255,255,255,0.9);
+    color: $danger;
+    &:hover { background: white; }
+  }
+}
+
+/* Decorative initials */
+.banner-initials {
+  font-size: 72px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.18);
+  letter-spacing: -4px;
+  user-select: none;
+  line-height: 1;
+}
+
+/* ── Card Body ─────────────────────────────────────────────────── */
+.card-body {
+  padding: 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.course-name {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: $text;
+  margin-bottom: 12px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Meta ──────────────────────────────────────────────────────── */
+.course-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: $muted;
+
+  i { font-size: 12px; color: #9ca3af; width: 14px; flex-shrink: 0; }
+}
+
+/* ── Stats ─────────────────────────────────────────────────────── */
+.course-stats {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 12px 0;
+  border-top: 1px solid #f3f4f6;
+  border-bottom: 1px solid #f3f4f6;
+  margin-bottom: 18px;
+}
+
+.stat {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 4px;
+
+  i { font-size: 18px; color: $accent; opacity: 0.8; }
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.stat-num {
+  font-size: 17px;
+  font-weight: 800;
+  color: $text;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: $muted;
+  font-weight: 500;
+}
+
+.stat-sep {
+  width: 1px;
+  height: 32px;
+  background: $border;
+  flex-shrink: 0;
+  margin: 0 8px;
+}
+
+/* ── CTA Button ────────────────────────────────────────────────── */
+.btn-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: $accent;
+  color: white;
+  text-decoration: none;
+  padding: 12px 0;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-top: auto;
+  transition: background 0.15s, transform 0.15s;
+  letter-spacing: 0.01em;
+
+  i { font-size: 12px; transition: transform 0.2s; }
+
+  &:hover {
+    background: $accent-dark;
+    transform: translateY(-1px);
+    i { transform: translateX(3px); }
+  }
+}
+
+/* ── Empty ─────────────────────────────────────────────────────── */
+.empty {
+  background: $bg-card;
+  border: 1px solid $border;
+  border-radius: 20px;
+  padding: 70px 30px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+
+  .empty-icon { font-size: 52px; color: #d1d5db; margin-bottom: 16px; display: block; }
+  h2 { font-size: 17px; font-weight: 700; color: $text; margin-bottom: 8px; }
+  p  { font-size: 13px; color: $muted; }
+}
+
+/* ── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .form-card form   { grid-template-columns: 1fr; }
+  .form-actions     { grid-column: span 1; }
+  .courses-grid     { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+}
+
+@media (max-width: 640px) {
+  .schedule-selects { grid-template-columns: 1fr 1fr; }
+  .banner-actions   { opacity: 1; }
+}

@@ -1,0 +1,74 @@
+<div class="top">
+  <h1>Modo Estudio</h1>
+  <p>Estadísticas de tiempo de estudio por estudiante</p>
+</div>
+
+@if (loading) {
+  <div class="loading">Cargando estadísticas...</div>
+}
+
+@if (!loading) {
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Estadísticas de estudiantes</h2>
+      <p class="subtitle">Selecciona uno de tus cursos para revisar el tiempo de estudio registrado por cada estudiante inscrito.</p>
+    </div>
+
+    @if (courses.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📚</div>
+        <h3>No tienes cursos aún</h3>
+        <p>Crea un curso para ver las estadísticas de tus estudiantes.</p>
+      </div>
+    }
+
+    @if (courses.length > 0) {
+      <div class="course-tabs">
+        @for (course of courses; track course.id) {
+          <button
+            class="course-tab"
+            [class.active]="selectedCourseId === course.id.toString()"
+            (click)="selectCourse(course.id)">
+            {{ course.name }}
+          </button>
+        }
+      </div>
+
+      @if (selectedStats.length > 0) {
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th>Estudiante</th>
+              <th>Total horas</th>
+              <th>Esta semana</th>
+              <th>Promedio diario</th>
+              <th>Sesiones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (stat of selectedStats; track stat.studentName) {
+              <tr>
+                <td class="student-name">
+                  <span class="dot" [style.background]="stat.color"></span>
+                  {{ stat.studentName }}
+                </td>
+                <td>{{ stat.totalHours }}h</td>
+                <td>{{ stat.weeklyHours }}h</td>
+                <td>{{ stat.averageDaily }}h</td>
+                <td>{{ stat.sessions }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+
+      @if (selectedStats.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">📊</div>
+          <h3>No hay estudiantes con registros</h3>
+          <p>Cuando los estudiantes inscritos usen el temporizador en este curso, aparecerán sus estadísticas aquí.</p>
+        </div>
+      }
+    }
+  </div>
+}

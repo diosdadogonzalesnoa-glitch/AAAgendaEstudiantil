@@ -1,0 +1,135 @@
+<!-- Header -->
+<div class="top">
+  <div class="title">
+    <h1>Tareas</h1>
+    <p>Gestiona las entregas y prácticas de tus cursos</p>
+  </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="stat-grid">
+  <div class="stat-card accent">
+    <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+    <div class="stat-body">
+      <span class="stat-num">{{ tareas.length }}</span>
+      <span class="stat-lbl">Total</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon success"><i class="fa-solid fa-inbox"></i></div>
+    <div class="stat-body">
+      <span class="stat-num">{{ receivedCount }}</span>
+      <span class="stat-lbl">Recibidas</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon warning"><i class="fa-solid fa-hourglass-half"></i></div>
+    <div class="stat-body">
+      <span class="stat-num">{{ notReceivedCount }}</span>
+      <span class="stat-lbl">No recibidas</span>
+    </div>
+  </div>
+</div>
+
+<!-- Section title -->
+<div class="section-bar">
+  <div class="section-title">
+    <i class="fa-solid fa-list-check"></i>
+    <span>Todas las tareas y prácticas</span>
+  </div>
+  <span class="section-count">{{ tareas.length }} actividad(es)</span>
+</div>
+
+@if (!tareas.length) {
+  <div class="empty">
+    <i class="fa-solid fa-inbox empty-icon"></i>
+    <h2>No hay actividades todavía</h2>
+    <p>Las tareas publicadas en tus cursos aparecerán aquí.</p>
+  </div>
+}
+
+<!-- Task Cards -->
+<div class="tasks-list">
+  @for (tarea of tareas; track tarea.id) {
+    <div class="task-card"
+         [class.is-practice]="tarea.taskType === 'PRACTICA'"
+         [class.is-high]="tarea.priority === 'ALTA'"
+         [class.is-medium]="tarea.priority === 'MEDIA'"
+         [class.is-overdue]="isPast(tarea.dueDate)">
+
+      <!-- Accent strip -->
+      <div class="task-strip"></div>
+
+      <!-- Card content -->
+      <div class="task-inner">
+
+        <!-- Top row: title + badges -->
+        <div class="task-head">
+          <div class="task-title-wrap">
+            @if (tarea.taskType === 'PRACTICA') {
+              <span class="task-type-icon practice"><i class="fa-solid fa-pen-ruler"></i></span>
+            } @else {
+              <span class="task-type-icon common"><i class="fa-solid fa-file-lines"></i></span>
+            }
+            <h2 class="task-title">{{ tarea.title }}</h2>
+          </div>
+          <div class="task-badges">
+            @if (tarea.taskType === 'PRACTICA') {
+              <span class="badge badge-practice"><i class="fa-solid fa-pen-ruler"></i> Práctica</span>
+            } @else {
+              @if (tarea.priority === 'ALTA') {
+                <span class="badge badge-high"><i class="fa-solid fa-fire"></i> Alta</span>
+              } @else if (tarea.priority === 'MEDIA') {
+                <span class="badge badge-medium"><i class="fa-solid fa-minus"></i> Media</span>
+              } @else {
+                <span class="badge badge-low"><i class="fa-solid fa-arrow-down"></i> Baja</span>
+              }
+            }
+            @if (isPast(tarea.dueDate)) {
+              <span class="badge badge-overdue"><i class="fa-solid fa-clock"></i> Vencida</span>
+            } @else {
+              <span class="badge badge-active"><i class="fa-solid fa-circle"></i> Activa</span>
+            }
+          </div>
+        </div>
+
+        <!-- Description -->
+        @if (tarea.description) {
+          <p class="task-desc">{{ tarea.description }}</p>
+        }
+
+        <!-- Meta row -->
+        <div class="task-meta">
+          <span class="meta-item">
+            <i class="fa-solid fa-book-open"></i>
+            <b>{{ tarea.course?.name ?? 'Sin curso' }}</b>
+          </span>
+          <span class="meta-sep"></span>
+          <span class="meta-item">
+            <i class="fa-regular fa-calendar"></i>
+            {{ formatDate(tarea.dueDate) }}
+          </span>
+          <span class="meta-sep"></span>
+          <span class="meta-item">
+            @if (tarea.taskType === 'PRACTICA') {
+              <i class="fa-solid fa-pen-ruler"></i> Práctica calificada
+            } @else {
+              <i class="fa-solid fa-paperclip"></i> Tarea común
+            }
+          </span>
+        </div>
+
+        <!-- Actions -->
+        <div class="task-foot">
+          <a class="btn btn-view" [routerLink]="['/docente/tareas', tarea.id, 'entregas']">
+            <i class="fa-solid fa-eye"></i> Ver entregas
+          </a>
+          <button class="btn btn-delete" (click)="eliminarTarea(tarea.id)">
+            <i class="fa-solid fa-trash"></i> Eliminar
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,61 @@
+<div class="header">
+  <div>
+    <h2>Recordatorios</h2>
+    <div class="subtitle">Mantente al día con tus actividades</div>
+  </div>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <h2>{{ todayTasks.length }}</h2>
+    <span>Hoy</span>
+  </div>
+  <div class="card">
+    <h2>{{ pendingCount }}</h2>
+    <span>Pendientes</span>
+  </div>
+  <div class="card">
+    <h2>{{ completedCount }}</h2>
+    <span>Completados</span>
+  </div>
+  <div class="card">
+    <h2>{{ todayTasks.length + tomorrowTasks.length + futureTasks.length }}</h2>
+    <span>Total</span>
+  </div>
+</div>
+
+<div class="header"><h3>Hoy</h3></div>
+@if (!todayTasks.length) {
+  <p class="empty">No hay tareas para hoy</p>
+}
+@for (t of todayTasks; track t.id) {
+  <div class="task">
+    <h4>{{ t.title }}</h4>
+    <p>{{ t.description }}</p>
+    <div class="task-meta">{{ t.course?.name ?? 'Sin curso' }} | {{ formatDate(t.dueDate) }}</div>
+  </div>
+}
+
+<div class="header"><h3>Mañana</h3></div>
+@if (!tomorrowTasks.length) {
+  <p class="empty">No hay tareas para mañana</p>
+}
+@for (t of tomorrowTasks; track t.id) {
+  <div class="task">
+    <h4>{{ t.title }}</h4>
+    <p>{{ t.description }}</p>
+    <div class="task-meta">{{ t.course?.name ?? 'Sin curso' }} | {{ formatDate(t.dueDate) }}</div>
+  </div>
+}
+
+<div class="header"><h3>Próximos</h3></div>
+@if (!futureTasks.length) {
+  <p class="empty">No hay tareas próximas</p>
+}
+@for (t of futureTasks; track t.id) {
+  <div class="task">
+    <h4>{{ t.title }}</h4>
+    <p>{{ t.description }}</p>
+    <div class="task-meta">{{ t.course?.name ?? 'Sin curso' }} | {{ formatDate(t.dueDate) }}</div>
+  </div>
+}

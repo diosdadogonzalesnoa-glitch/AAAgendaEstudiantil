@@ -1,0 +1,29 @@
+<div class="top">
+  <a routerLink="/alumno/tareas" class="back-btn">‹</a>
+  <div class="title">
+    <h1>Detalle de tarea</h1>
+    <p>Visualiza la actividad completa</p>
+  </div>
+</div>
+
+@if (tarea) {
+  <div class="task-box">
+    <h2>{{ tarea.title }}</h2>
+    <p>{{ tarea.description }}</p>
+
+    <div class="info">
+      <div class="badge"
+           [class.high]="tarea.priority === 'ALTA'"
+           [class.medium]="tarea.priority === 'MEDIA'"
+           [class.low]="tarea.priority === 'BAJA'">
+        {{ tarea.priority }}
+      </div>
+      <div class="badge">🕒 {{ formatDate(tarea.dueDate) }}</div>
+    </div>
+
+    <div class="submit-box">
+      <h3>📤 Entregar tarea</h3>
+      <p>Usa la sección de Tareas para entregar esta actividad.</p>
+    </div>
+  </div>
+}

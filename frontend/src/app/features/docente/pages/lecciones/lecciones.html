@@ -1,0 +1,26 @@
+<div class="top">
+  <div class="title">
+    <h1>Lecciones</h1>
+    <p>Todas las clases publicadas en tus cursos</p>
+  </div>
+</div>
+
+@if (!lecciones.length) {
+  <div class="empty">
+    <h2>No has subido lecciones aún</h2>
+    <p>Publica clases desde el detalle de cada curso.</p>
+  </div>
+}
+
+<div class="list">
+  @for (leccion of lecciones; track leccion.id) {
+    <div class="lesson-card">
+      <div class="lesson-info">
+        <h4>{{ leccion.title }}</h4>
+        <p>{{ leccion.description }}</p>
+        <span class="meta">📅 {{ leccion.lessonDate | date:'dd/MM/yyyy' }} &nbsp;·&nbsp; {{ leccion.course?.name }}</span>
+      </div>
+      <a class="btn-view" [routerLink]="['/docente/leccion', leccion.id]">Ver PDF</a>
+    </div>
+  }
+</div>

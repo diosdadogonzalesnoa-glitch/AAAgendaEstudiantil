@@ -1,0 +1,160 @@
+<div class="top">
+  <div class="title-section">
+    <div class="title">
+      <h1>Mis Cursos</h1>
+      <p>Gestiona tus cursos y publicaciones</p>
+    </div>
+  </div>
+  <button class="add-btn" (click)="toggleForm()">
+    <i class="fa-solid fa-plus"></i> Nuevo Curso
+  </button>
+</div>
+
+@if (showForm) {
+  <div class="form-card">
+    <h3><i class="fa-solid fa-book-open"></i> Crear nuevo curso</h3>
+    <form (ngSubmit)="agregarCurso()">
+      <input type="text" [(ngModel)]="newCurso.name" name="name" placeholder="Nombre del curso" required />
+
+      <div class="field-readonly">
+        <span class="field-label">Docente</span>
+        <span class="field-value">{{ userName }}</span>
+      </div>
+
+      <div class="schedule-selects">
+        <select [(ngModel)]="newDia" name="newDia" required>
+          <option value="">Día</option>
+          @for (d of dias; track d) { <option [value]="d">{{ d }}</option> }
+        </select>
+        <select [(ngModel)]="newHora" name="newHora" required>
+          <option value="">Hora</option>
+          @for (h of horas; track h) { <option [value]="h">{{ h }}</option> }
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="toggleForm()">Cancelar</button>
+        <button type="submit" class="btn-submit" [disabled]="!newCurso.name || !newDia || !newHora">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar curso
+        </button>
+      </div>
+    </form>
+  </div>
+}
+
+@if (showEditForm) {
+  <div class="form-card">
+    <h3><i class="fa-solid fa-pen-to-square"></i> Editar curso</h3>
+    <form (ngSubmit)="actualizarCurso()">
+      <input type="text" [(ngModel)]="editCurso.name" name="ename" placeholder="Nombre" required />
+
+      <div class="field-readonly">
+        <span class="field-label">Docente</span>
+        <span class="field-value">{{ userName }}</span>
+      </div>
+
+      <div class="schedule-selects">
+        <select [(ngModel)]="editDia" name="editDia" required>
+          <option value="">Día</option>
+          @for (d of dias; track d) { <option [value]="d">{{ d }}</option> }
+        </select>
+        <select [(ngModel)]="editHora" name="editHora" required>
+          <option value="">Hora</option>
+          @for (h of horas; track h) { <option [value]="h">{{ h }}</option> }
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="showEditForm = false">Cancelar</button>
+        <button type="submit" class="btn-submit" [disabled]="!editCurso.name || !editDia || !editHora">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar cambios
+        </button>
+      </div>
+    </form>
+  </div>
+}
+
+@if (!cursos.length) {
+  <div class="empty">
+    <i class="fa-solid fa-graduation-cap empty-icon"></i>
+    <h2>No tienes cursos creados</h2>
+    <p>Crea tu primer curso con el botón de arriba.</p>
+  </div>
+}
+
+<div class="courses-grid">
+  @for (curso of cursos; track curso.id; let i = $index) {
+    <div class="course-card" [class.finished]="curso.status === 'TERMINADO'">
+
+      <!-- Banner -->
+      <div class="card-banner" [style.background]="getGradient(i)">
+
+        <!-- Badge estado (click para cambiar) -->
+        <div class="banner-badge"
+             [class.badge-active]="curso.status !== 'TERMINADO'"
+             [class.badge-done]="curso.status === 'TERMINADO'"
+             (click)="toggleStatus(curso)"
+             title="Click para cambiar estado">
+          @if (curso.status === 'TERMINADO') {
+            <i class="fa-solid fa-circle-check"></i> Terminado
+          } @else {
+            <i class="fa-solid fa-circle"></i> Activo
+          }
+        </div>
+
+        <!-- Acciones (editar / eliminar) superpuestos en banner -->
+        <div class="banner-actions">
+          <button class="baction-btn edit" (click)="editarCurso(curso)" title="Editar">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button class="baction-btn del" (click)="eliminarCurso(curso.id)" title="Eliminar">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+
+        <!-- Iniciales decorativas -->
+        <div class="banner-initials">{{ getInitials(curso.name) }}</div>
+      </div>
+
+      <!-- Cuerpo -->
+      <div class="card-body">
+
+        <h2 class="course-name">{{ curso.name }}</h2>
+
+        <div class="course-meta">
+          <div class="meta-item">
+            <i class="fa-solid fa-chalkboard-user"></i>
+            <span>{{ curso.teacher }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fa-regular fa-clock"></i>
+            <span>{{ curso.schedule }}</span>
+          </div>
+        </div>
+
+        <div class="course-stats">
+          <div class="stat">
+            <i class="fa-solid fa-users"></i>
+            <div class="stat-info">
+              <span class="stat-num">{{ curso.studentsCount ?? 0 }}</span>
+              <span class="stat-label">alumnos</span>
+            </div>
+          </div>
+          <div class="stat-sep"></div>
+          <div class="stat">
+            <i class="fa-solid fa-clipboard-list"></i>
+            <div class="stat-info">
+              <span class="stat-num">{{ curso.tasksCount ?? 0 }}</span>
+              <span class="stat-label">tareas</span>
+            </div>
+          </div>
+        </div>
+
+        <a class="btn-view" [routerLink]="['/docente/cursos', curso.id]">
+          Ver curso &nbsp;<i class="fa-solid fa-arrow-right"></i>
+        </a>
+
+      </div>
+    </div>
+  }
+</div>
