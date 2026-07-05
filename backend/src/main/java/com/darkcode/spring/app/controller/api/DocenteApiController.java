@@ -483,6 +483,18 @@ public class DocenteApiController {
         return ResponseEntity.ok(lessons);
     }
 
+    @GetMapping("/lecciones/{id}")
+    public ResponseEntity<?> lessonDetail(@PathVariable Long id, Authentication auth) {
+        User user = u(auth);
+        if (user == null) return ResponseEntity.status(401).build();
+        Lesson lesson = lessonService.getLessonById(id);
+        if (lesson == null) return ResponseEntity.notFound().build();
+        Map<String, Object> lm = lessonMap(lesson);
+        if (lesson.getCourse() != null)
+            lm.put("course", Map.of("id", lesson.getCourse().getId(), "name", lesson.getCourse().getName()));
+        return ResponseEntity.ok(Map.of("lesson", lm));
+    }
+
     @DeleteMapping("/lecciones/{id}")
     public ResponseEntity<?> deleteLesson(@PathVariable Long id, Authentication auth) {
         User user = u(auth);
@@ -516,6 +528,7 @@ public class DocenteApiController {
         m.put("title", l.getTitle());
         m.put("description", l.getDescription());
         m.put("storedFileName", l.getStoredFileName());
+        m.put("originalFileName", l.getOriginalFileName());
         m.put("lessonDate", l.getLessonDate());
         return m;
     }

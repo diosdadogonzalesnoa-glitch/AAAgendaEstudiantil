@@ -182,13 +182,26 @@
         <!-- Delivery form -->
         @if (openDeliveries[tarea.id] && tarea.taskType !== 'PRACTICA' && !isPast(tarea.dueDate)) {
           <div class="delivery-form">
-            <form (ngSubmit)="submitDelivery(tarea.id, $event)">
+            <form (submit)="submitDelivery(tarea.id, $event)">
               <label class="form-label">Respuesta escrita</label>
               <textarea name="answerText" maxlength="9000"
                         placeholder="Escribe tu respuesta aquí..."></textarea>
               <label class="form-label">Archivos adjuntos</label>
-              <input type="file" multiple (change)="onFileChange($event, tarea.id)" />
-              <small><i class="fa-solid fa-paperclip"></i> Máximo {{ tarea.maxFiles ?? 20 }} archivos.</small>
+              <input type="file" multiple (change)="onFileChange($event, tarea.id, tarea.maxFiles ?? 20)" />
+              <small><i class="fa-solid fa-paperclip"></i> Máximo {{ tarea.maxFiles ?? 20 }} archivos. Puedes seleccionar varios en la misma ventana o abrirla varias veces.</small>
+              @if (selectedFiles[tarea.id]?.length) {
+                <div class="selected-files">
+                  @for (file of selectedFiles[tarea.id]; track file.name; let i = $index) {
+                    <div class="selected-file">
+                      <i class="fa-solid fa-file"></i>
+                      <span class="selected-file-name">{{ file.name }}</span>
+                      <button type="button" class="btn-remove-file" (click)="removeFile(tarea.id, i)" title="Quitar archivo">
+                        <i class="fa-solid fa-xmark"></i>
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
               <button type="submit" class="btn btn-send">
                 <i class="fa-solid fa-paper-plane"></i> Enviar entrega
               </button>

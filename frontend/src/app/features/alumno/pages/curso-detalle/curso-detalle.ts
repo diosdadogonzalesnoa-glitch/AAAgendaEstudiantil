@@ -65,7 +65,7 @@ export class CursoDetalle implements OnInit {
       return g >= 12 ? `✅ Nota final: ${g}/20 - Aprobado` : `❌ Nota final: ${g}/20 - Desaprobado`;
     }
     if (s === 'PENDIENTE_CALIFICACION') return '📝 Tarea enviada correctamente. Será calificada por el docente.';
-    if (task.dueDate && new Date(task.dueDate) < new Date()) return '❌ Nota final: 0/20 - Desaprobado';
+    if (task.dueDate && new Date(task.dueDate) < new Date()) return '⏰ Actividad vencida. No se registró ninguna entrega.';
     return '⚠️ Recuerda resolver esta actividad desde la sección de Tareas.';
   }
 }

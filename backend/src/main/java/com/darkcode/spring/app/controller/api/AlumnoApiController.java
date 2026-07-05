@@ -385,6 +385,7 @@ public class AlumnoApiController {
         m.put("title", l.getTitle());
         m.put("description", l.getDescription());
         m.put("storedFileName", l.getStoredFileName());
+        m.put("originalFileName", l.getOriginalFileName());
         m.put("lessonDate", l.getLessonDate());
         if (l.getCourse() != null)
             m.put("course", Map.of("id", l.getCourse().getId(), "name", l.getCourse().getName()));

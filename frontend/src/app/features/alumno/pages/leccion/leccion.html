@@ -1,35 +1,87 @@
+<!-- Header -->
 <div class="top">
-  <a [routerLink]="['/alumno/cursos', course?.id]" class="back-btn">‹</a>
-  <div class="title">
-    <h1>{{ lesson?.title ?? 'Clase' }}</h1>
-    <p>{{ course?.name ?? 'Curso' }}</p>
+  <button class="back-btn" (click)="goBack()">
+    <i class="fa-solid fa-chevron-left"></i>
+  </button>
+  <div class="top-content">
+    @if (lesson) {
+      <div class="breadcrumb">
+        <i class="fa-solid fa-book-open"></i>
+        <span>{{ lesson.course?.name }}</span>
+        <i class="fa-solid fa-angle-right bc-sep"></i>
+        <span>Material de clase</span>
+      </div>
+    }
+    <h1>{{ lesson?.title ?? 'Cargando material...' }}</h1>
   </div>
 </div>
 
 @if (lesson) {
-  <div class="info-grid">
-    <div class="info-card">
-      <h2>{{ lesson.title }}</h2>
-      <span>Título de la clase</span>
+  <!-- Meta chips -->
+  <div class="meta-row">
+    <div class="meta-chip">
+      <i class="fa-regular fa-calendar"></i>
+      <span>{{ formatDate(lesson.lessonDate) }}</span>
     </div>
-    <div class="info-card">
-      <h2>{{ lesson.originalFileName }}</h2>
-      <span>Material PDF</span>
+    <div class="meta-chip file-chip">
+      <i class="fa-solid fa-file-pdf"></i>
+      <span>{{ lesson.originalFileName ?? 'Documento PDF' }}</span>
     </div>
-    <div class="info-card">
-      <h2>{{ lesson.lessonDate ?? '—' }}</h2>
-      <span>Fecha de publicación</span>
-    </div>
+    @if (lesson.course) {
+      <div class="meta-chip accent">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span>{{ lesson.course.name }}</span>
+      </div>
+    }
   </div>
 
-  <div class="viewer-box">
-    <div class="viewer-header">
+  <!-- Description -->
+  @if (lesson.description) {
+    <div class="desc-card">
+      <div class="desc-icon"><i class="fa-solid fa-circle-info"></i></div>
       <div>
-        <h3>📘 Vista previa del material</h3>
-        <p>{{ lesson.description }}</p>
+        <span class="desc-label">Descripción de la clase</span>
+        <p class="desc-text">{{ lesson.description }}</p>
       </div>
-      <a class="open-btn" [href]="pdfUrl" target="_blank">Abrir PDF</a>
     </div>
-    <iframe class="pdf-frame" [src]="pdfUrl"></iframe>
+  }
+
+  <!-- PDF Viewer -->
+  <div class="viewer-card">
+    <div class="viewer-toolbar">
+      <div class="toolbar-left">
+        <div class="pdf-icon-wrap"><i class="fa-solid fa-file-pdf"></i></div>
+        <div class="toolbar-info">
+          <span class="toolbar-filename">{{ lesson.originalFileName ?? lesson.title }}</span>
+          <span class="toolbar-tag">Material de clase · PDF</span>
+        </div>
+      </div>
+      <button class="btn-open-pdf" (click)="openPdf()" [disabled]="!blobUrl">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        Abrir en nueva pestaña
+      </button>
+    </div>
+    <div class="viewer-body">
+      @if (pdfLoading) {
+        <div class="pdf-loading">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          <p>Cargando documento...</p>
+        </div>
+      } @else if (pdfError) {
+        <div class="pdf-loading error">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <p>No se pudo cargar el PDF. Intenta abrirlo en una nueva pestaña.</p>
+        </div>
+      } @else if (pdfUrl) {
+        <iframe class="pdf-frame" [src]="pdfUrl" title="Vista previa del material"></iframe>
+      }
+    </div>
+  </div>
+}
+
+@if (!lesson) {
+  <div class="loading">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    <p>Cargando material de clase...</p>
   </div>
 }

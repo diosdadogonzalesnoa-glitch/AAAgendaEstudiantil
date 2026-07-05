@@ -52,11 +52,23 @@ export class Tareas implements OnInit {
     this.openDeliveries[taskId] = !this.openDeliveries[taskId];
   }
 
-  onFileChange(event: Event, taskId: number): void {
+  onFileChange(event: Event, taskId: number, maxFiles: number = 20): void {
     const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.selectedFiles[taskId] = Array.from(input.files).slice(0, 20);
-    }
+    if (!input.files?.length) return;
+    const existing = this.selectedFiles[taskId] ?? [];
+    const incoming = Array.from(input.files);
+    const combined = [...existing, ...incoming];
+    const unique = combined.filter((f, i, arr) =>
+      arr.findIndex(x => x.name === f.name && x.size === f.size) === i
+    );
+    this.selectedFiles[taskId] = unique.slice(0, maxFiles);
+    input.value = '';
+  }
+
+  removeFile(taskId: number, index: number): void {
+    const files = [...(this.selectedFiles[taskId] ?? [])];
+    files.splice(index, 1);
+    this.selectedFiles[taskId] = files;
   }
 
   submitDelivery(taskId: number, event: Event): void {
