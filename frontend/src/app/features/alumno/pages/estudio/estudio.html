@@ -1,0 +1,127 @@
+<h1 class="page-title">Modo Estudio</h1>
+
+<div class="study-layout">
+
+  <!-- Temporizador -->
+  <div class="timer-panel">
+    <h2>Temporizador inteligente</h2>
+    <p class="timer-sub">Selecciona un curso y una práctica pendiente para iniciar tu sesión de estudio.</p>
+
+    <div class="timer-display">{{ formattedTime }}</div>
+
+    @if (!running) {
+      <div class="selectors">
+        <select [(ngModel)]="selectedCourseId" (ngModelChange)="onCourseChange()">
+          <option [ngValue]="null">Selecciona un curso</option>
+          @for (c of courses; track c.id) {
+            <option [ngValue]="c.id">{{ c.name }}</option>
+          }
+        </select>
+
+        <select [(ngModel)]="selectedTaskId" [disabled]="!selectedCourseId">
+          <option [ngValue]="null">Selecciona una práctica</option>
+          @for (p of practicesForCourse; track p.id) {
+            <option [ngValue]="p.id">{{ p.title }}</option>
+          }
+          @if (selectedCourseId && practicesForCourse.length === 0) {
+            <option disabled>Sin prácticas pendientes</option>
+          }
+        </select>
+      </div>
+
+      <div class="timer-hint">
+        Dale click a <b>INICIAR</b> para comenzar. Cada respuesta se guardará automáticamente al finalizar la práctica.
+      </div>
+    }
+
+    <!-- Preguntas durante la sesión -->
+    @if (running && questions.length > 0 && currentQuestion) {
+      <div class="question-panel">
+        <div class="question-counter">
+          Pregunta {{ currentIndex + 1 }} de {{ questions.length }}
+        </div>
+
+        <p class="question-text">{{ currentQuestion.text }}</p>
+
+        @if (currentQuestion.written) {
+          <textarea class="written-input"
+                    [placeholder]="'Escribe tu respuesta aquí...'"
+                    (input)="setAnswer(currentQuestion.id, $any($event.target).value)"></textarea>
+        } @else {
+          <div class="options-list">
+            @for (option of currentQuestion.options; track option.id) {
+              <label class="option-label" [class.selected]="answers[currentQuestion.id] === option.id">
+                <input type="radio"
+                       [name]="'q_' + currentQuestion.id"
+                       [value]="option.id"
+                       (change)="setAnswer(currentQuestion.id, option.id)">
+                <span>{{ option.text }}</span>
+              </label>
+            }
+          </div>
+        }
+
+        <div class="question-nav">
+          <button class="nav-btn" (click)="prev()" [disabled]="currentIndex === 0">‹ Anterior</button>
+          @if (currentIndex < questions.length - 1) {
+            <button class="nav-btn next" (click)="next()">Siguiente ›</button>
+          }
+        </div>
+      </div>
+    }
+
+    <button class="btn-start" [class.running]="running" [disabled]="!canStart && !running || loadingQuestions" (click)="toggleTimer()">
+      @if (loadingQuestions) { Cargando... }
+      @else if (running) { FINALIZAR }
+      @else { INICIAR }
+    </button>
+  </div>
+
+  <!-- Stats laterales -->
+  <div class="stats-panel">
+    <div class="stat-box">
+      <p class="stat-label">Esta semana</p>
+      <h2 class="stat-value">{{ weeklyStudyHours }}h</h2>
+      <p class="stat-desc">Total de horas registradas</p>
+    </div>
+    <div class="stat-box">
+      <p class="stat-label">Sesiones</p>
+      <h2 class="stat-value">{{ totalSessions }}</h2>
+      <p class="stat-desc">Prácticas completadas</p>
+    </div>
+  </div>
+</div>
+
+<!-- Estadísticas por curso -->
+@if (courseStats.length > 0) {
+  <div class="course-stats-panel">
+    <h2>Estadísticas por curso</h2>
+    <p class="timer-sub">Resumen de estudio registrado con el temporizador inteligente.</p>
+
+    <table class="stats-table">
+      <thead>
+        <tr>
+          <th>Curso</th>
+          <th>Total horas</th>
+          <th>Esta semana</th>
+          <th>Promedio diario</th>
+          <th>Sesiones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (stat of courseStats; track stat.courseId) {
+          <tr>
+            <td class="course-name">
+              <span class="dot" [style.background]="stat.color"></span>
+              {{ stat.courseName }}
+            </td>
+            <td>{{ stat.totalHours }}h</td>
+            <td>{{ stat.weeklyHours }}h</td>
+            <td>{{ stat.averageDaily }}h</td>
+            <td>{{ stat.sessions }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

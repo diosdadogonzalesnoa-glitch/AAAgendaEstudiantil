@@ -1,0 +1,94 @@
+<div class="login-page">
+
+  <!-- Panel izquierdo -->
+  <div class="login-visual">
+    <div class="visual-overlay"></div>
+    <div class="visual-content">
+    </div>
+  </div>
+
+  <!-- Panel derecho -->
+  <div class="login-panel">
+    <div class="login-card">
+
+      <div class="card-brand">
+        <div class="card-brand-icon">📘</div>
+        <div>
+          <h2>CREAR <span>CUENTA</span></h2>
+          <p>Completa los datos para registrarte</p>
+        </div>
+      </div>
+
+      <!-- Selector de rol -->
+      <div class="role-selector">
+        <button type="button" class="role-btn"
+                [class.active]="form.get('role')?.value === 'ESTUDIANTE'"
+                (click)="selectRole('ESTUDIANTE')">
+          🎓 Alumno
+        </button>
+        <button type="button" class="role-btn"
+                [class.active]="form.get('role')?.value === 'DOCENTE'"
+                (click)="selectRole('DOCENTE')">
+          👨‍🏫 Docente
+        </button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+
+        <div class="field-group">
+          <label>NOMBRE COMPLETO</label>
+          <div class="input-wrapper">
+            <input type="text" formControlName="name" placeholder="Juan Pérez" autocomplete="name" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>CORREO ELECTRÓNICO</label>
+          <div class="input-wrapper">
+            <input type="email" formControlName="email" placeholder="correo@universidad.edu" autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>CONTRASEÑA</label>
+          <div class="input-wrapper">
+            <input [type]="showPassword ? 'text' : 'password'"
+                   formControlName="password"
+                   placeholder="Mínimo 6 caracteres"
+                   autocomplete="new-password" />
+            <button type="button" class="toggle-pass" (click)="showPassword = !showPassword">
+              @if (!showPassword) {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              } @else {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                  <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              }
+            </button>
+          </div>
+        </div>
+
+        @if (error) {
+          <div class="msg error">{{ error }}</div>
+        }
+
+        <button type="submit" class="submit-btn" [disabled]="loading || form.invalid">
+          {{ loading ? 'REGISTRANDO...' : 'CREAR CUENTA' }}
+        </button>
+
+      </form>
+
+      <div class="card-footer">
+        <a routerLink="/auth/login">← ¿Ya tienes cuenta? Inicia sesión</a>
+      </div>
+
+    </div>
+  </div>
+
+</div>

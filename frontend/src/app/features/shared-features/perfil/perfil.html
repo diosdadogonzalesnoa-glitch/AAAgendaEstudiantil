@@ -1,0 +1,50 @@
+<div class="title">Mi Perfil</div>
+<div class="subtitle">Información personal y rendimiento académico</div>
+
+@if (user) {
+  <div class="top">
+    <div class="profile-card">
+      <div class="center">
+        <div class="avatar">{{ user.name.charAt(0).toUpperCase() }}</div>
+        <h3>{{ user.name }}
+          <span class="edit" (click)="toggleEdit()">✏️</span>
+        </h3>
+        <p>{{ user.role === 'DOCENTE' ? 'Docente' : 'Estudiante' }}</p>
+      </div>
+
+      <div class="info-box">
+        <div>
+          <div class="label">Email</div>
+          <div class="value">{{ user.email }}</div>
+        </div>
+        <div class="icon">📧</div>
+      </div>
+
+      <div class="info-box">
+        <div>
+          <div class="label">Rol</div>
+          <div class="value">{{ user.role === 'DOCENTE' ? 'Docente' : 'Estudiante' }}</div>
+        </div>
+        <div class="icon">👤</div>
+      </div>
+
+      <div class="info-box">
+        <div>
+          <div class="label">Cursos activos</div>
+          <div class="value">{{ cursosCount }} cursos</div>
+        </div>
+        <div class="icon">📖</div>
+      </div>
+
+      @if (showEdit) {
+        <div class="form">
+          <input type="text" [(ngModel)]="newName" placeholder="Nuevo nombre" />
+          <div class="btn-group">
+            <button class="save" (click)="guardar()">Guardar</button>
+            <button class="cancel" (click)="toggleEdit()">X</button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

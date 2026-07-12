@@ -1,0 +1,175 @@
+<div class="top">
+  <a routerLink="/alumno/tareas" class="back-btn">
+    <i class="fa-solid fa-arrow-left"></i>
+  </a>
+  <div class="title">
+    <h1>{{ tarea?.title ?? 'Práctica Calificada' }}</h1>
+    <p>{{ tarea?.course?.name ?? 'Curso' }}</p>
+  </div>
+</div>
+
+@if (tarea) {
+  <div class="info-grid">
+    <div class="info-card">
+      <i class="fa-solid fa-circle-question card-icon"></i>
+      <h2>{{ questions.length }}</h2>
+      <span>Preguntas</span>
+    </div>
+    <div class="info-card">
+      <i class="fa-solid fa-star card-icon"></i>
+      <h2>{{ questions.length === 5 ? '4 pts' : questions.length === 10 ? '2 pts' : '1 pt' }}</h2>
+      <span>Valor por pregunta</span>
+    </div>
+    <div class="info-card">
+      <i class="fa-regular fa-calendar card-icon"></i>
+      <h2 class="date-val">{{ formatDate(tarea.dueDate) }}</h2>
+      <span>Fecha límite</span>
+    </div>
+  </div>
+}
+
+<!-- ── RESULTADO (ya entregada) ── -->
+@if (submission) {
+  <div class="result-banner" [class.approved]="submission.grade >= 12" [class.failed]="submission.grade != null && submission.grade < 12" [class.pending]="submission.grade == null">
+    <div class="result-icon">
+      @if (submission.grade == null) {
+        <i class="fa-solid fa-hourglass-half"></i>
+      } @else if (submission.grade >= 12) {
+        <i class="fa-solid fa-circle-check"></i>
+      } @else {
+        <i class="fa-solid fa-circle-xmark"></i>
+      }
+    </div>
+    <div class="result-info">
+      <h2>Práctica entregada</h2>
+      @if (submission.grade != null) {
+        <p>Nota: <strong>{{ submission.grade }}/20</strong> — {{ submission.grade >= 12 ? 'Aprobado' : 'Desaprobado' }}</p>
+      } @else {
+        <p>Pendiente de calificación</p>
+      }
+    </div>
+  </div>
+
+  @if (submission.feedback) {
+    <div class="feedback-banner">
+      <i class="fa-solid fa-comment-dots"></i>
+      <div>
+        <span class="feedback-label">Retroalimentación del docente</span>
+        <p>{{ submission.feedback }}</p>
+      </div>
+    </div>
+  }
+
+  <!-- Revisión de respuestas -->
+  <div class="review-box">
+    <div class="review-header">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>Revisión de respuestas</span>
+    </div>
+
+    @for (question of questions; track question.id; let qi = $index) {
+      <div class="review-question" [class.correct]="question.isCorrect === true" [class.incorrect]="question.isCorrect === false">
+
+        <div class="review-q-header">
+          <span class="q-number">Pregunta {{ question.order }}</span>
+          @if (!question.written) {
+            @if (question.isCorrect === true) {
+              <span class="q-badge correct-badge"><i class="fa-solid fa-check"></i> Correcta</span>
+            } @else if (question.isCorrect === false) {
+              <span class="q-badge wrong-badge"><i class="fa-solid fa-xmark"></i> Incorrecta</span>
+            }
+          } @else {
+            <span class="q-badge written-badge"><i class="fa-solid fa-pen"></i> Escrita</span>
+          }
+        </div>
+
+        <p class="q-text">{{ question.text }}</p>
+
+        @if (question.written) {
+          <div class="written-review">
+            <span class="written-label">Tu respuesta:</span>
+            <p>{{ question.writtenAnswer ?? '(sin respuesta)' }}</p>
+          </div>
+        } @else {
+          <div class="options-review">
+            @for (opt of question.options; track opt.id) {
+              <div class="opt-review"
+                   [class.opt-correct]="opt.correct"
+                   [class.opt-selected]="opt.id === question.selectedOptionId && !opt.correct"
+                   [class.opt-selected-correct]="opt.id === question.selectedOptionId && opt.correct">
+                <span class="opt-indicator">
+                  @if (opt.correct) {
+                    <i class="fa-solid fa-check"></i>
+                  } @else if (opt.id === question.selectedOptionId) {
+                    <i class="fa-solid fa-xmark"></i>
+                  } @else {
+                    <i class="fa-regular fa-circle"></i>
+                  }
+                </span>
+                <span class="opt-text">{{ opt.text }}</span>
+                @if (opt.correct) {
+                  <span class="opt-tag">Respuesta correcta</span>
+                } @else if (opt.id === question.selectedOptionId) {
+                  <span class="opt-tag wrong-tag">Tu respuesta</span>
+                }
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+    }
+  </div>
+}
+
+<!-- ── SIN PREGUNTAS ── -->
+@if (!submission && questions.length === 0) {
+  <div class="empty">
+    <i class="fa-solid fa-circle-exclamation empty-icon"></i>
+    <h2>No hay preguntas disponibles</h2>
+    <p>Esta práctica todavía no tiene preguntas registradas.</p>
+  </div>
+}
+
+<!-- ── FORMULARIO (sin entregar) ── -->
+@if (!submission && questions.length > 0) {
+  <form (ngSubmit)="submit()">
+    <div class="practice-box">
+      <div class="practice-header">
+        <h3><i class="fa-solid fa-pen-to-square"></i> Desarrollo de la práctica</h3>
+        <p>{{ tarea?.description ?? 'Lee cuidadosamente cada enunciado y responde todas las preguntas.' }}</p>
+      </div>
+
+      @for (question of questions; track question.id) {
+        <div class="question-card">
+          <h3>Pregunta {{ question.order }}</h3>
+          <p>{{ question.text }}</p>
+
+          @if (question.written) {
+            <textarea class="written-answer"
+                      placeholder="Escribe tu respuesta aquí..."
+                      (input)="setAnswer(question.id, $any($event.target).value)"
+                      required></textarea>
+          } @else {
+            @for (option of question.options; track option.id) {
+              <label class="option">
+                <input type="radio"
+                       [name]="'q_' + question.id"
+                       [value]="option.id"
+                       (change)="setAnswer(question.id, option.id)"
+                       required>
+                <span>{{ option.text }}</span>
+              </label>
+            }
+          }
+        </div>
+      }
+
+      <div class="submit-area">
+        <button type="submit" class="submit-btn">
+          <i class="fa-solid fa-paper-plane"></i> Enviar práctica
+        </button>
+      </div>
+    </div>
+  </form>
+}

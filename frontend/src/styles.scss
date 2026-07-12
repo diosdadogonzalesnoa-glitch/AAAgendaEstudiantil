@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Orbitron:wght@500;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --font: 'Poppins', sans-serif;
+  --bg: #f4f6fb;
+  --white: #ffffff;
+  --border: #e5e7eb;
+  --text: #111827;
+  --muted: #6b7280;
+  --primary: #7c3aed;
+  --primary-light: #ede9fe;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --sidebar-width: 260px;
+  --sidebar-width-collapsed: 68px;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ── Layout base ── */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+body.sidebar-collapsed .main-content {
+  margin-left: var(--sidebar-width-collapsed);
+}
+
+.page-content {
+  flex: 1;
+  padding: 30px;
+}
+
+@media (max-width: 900px) {
+  .main-content {
+    margin-left: 0 !important;
+  }
+
+  .page-content {
+    padding: 20px;
+    padding-top: 64px;
+  }
+}

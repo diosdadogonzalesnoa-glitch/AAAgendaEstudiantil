@@ -1,0 +1,267 @@
+<!-- Header -->
+<div class="top">
+  <div class="top-left">
+    <a routerLink="/docente/tareas" class="back-btn">
+      <i class="fa-solid fa-chevron-left"></i>
+    </a>
+    <div class="title">
+      <h1>{{ tarea?.title ?? 'Entregas' }}</h1>
+      <p>{{ tarea?.course?.name ?? 'Curso' }}</p>
+    </div>
+  </div>
+</div>
+
+@if (tarea) {
+  <!-- Stat grid -->
+  <div class="stat-grid">
+    <div class="stat-card accent">
+      <div class="stat-icon purple"><i class="fa-solid fa-users"></i></div>
+      <div class="stat-body">
+        <span class="stat-num">{{ submissions.length }}</span>
+        <span class="stat-lbl">Entregas recibidas</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon warning"><i class="fa-solid fa-hourglass-half"></i></div>
+      <div class="stat-body">
+        <span class="stat-num">{{ pendingStudents.length }}</span>
+        <span class="stat-lbl">Sin entregar</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" [class.practice]="tarea.taskType === 'PRACTICA'" [class.common]="tarea.taskType !== 'PRACTICA'">
+        @if (tarea.taskType === 'PRACTICA') {
+          <i class="fa-solid fa-pen-ruler"></i>
+        } @else {
+          <i class="fa-solid fa-file-lines"></i>
+        }
+      </div>
+      <div class="stat-body">
+        <span class="stat-num" style="font-size:14px; font-weight:700;">
+          {{ tarea.taskType === 'PRACTICA' ? 'Práctica' : tarea.priority }}
+        </span>
+        <span class="stat-lbl">Tipo de actividad</span>
+      </div>
+    </div>
+    @if (tarea.taskType !== 'PRACTICA') {
+      <div class="stat-card">
+        <div class="stat-icon success"><i class="fa-solid fa-rotate"></i></div>
+        <div class="stat-body">
+          <span class="stat-num">{{ tarea.maxAttempts ?? 1 }}</span>
+          <span class="stat-lbl">Intentos permitidos</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Section: Entregas -->
+  <div class="section-bar">
+    <div class="section-title">
+      <i class="fa-solid fa-inbox"></i>
+      <span>Entregas recibidas</span>
+    </div>
+    <span class="section-count">{{ submissions.length }} entrega(s)</span>
+  </div>
+
+  @if (submissions.length === 0) {
+    <div class="empty-state">
+      <i class="fa-solid fa-inbox empty-icon"></i>
+      <h2>Nadie entregó todavía</h2>
+      <p>Cuando los estudiantes envíen sus respuestas aparecerán aquí.</p>
+    </div>
+  }
+
+  <div class="submissions-list">
+    @for (sub of submissions; track sub.id) {
+      <div class="sub-card">
+
+        <!-- Card header: student + grade -->
+        <div class="sub-header">
+          <div class="sub-student">
+            <div class="avatar">{{ getInitials(sub.student?.name) }}</div>
+            <div class="sub-info">
+              <span class="sub-name">{{ sub.student?.name }}</span>
+              <span class="sub-date">
+                <i class="fa-regular fa-clock"></i>
+                {{ formatDate(sub.submittedAt) }}
+              </span>
+            </div>
+          </div>
+          <div class="sub-right-head">
+            @if (tarea.maxAttempts > 1) {
+              <span class="attempt-badge">Intento {{ sub.attemptNumber ?? 1 }}/{{ tarea.maxAttempts }}</span>
+            }
+            @if (sub.grade != null) {
+              <span class="grade-pill" [class.approved]="sub.grade >= 12" [class.failed]="sub.grade < 12">
+                <i class="fa-solid fa-star" style="font-size:10px"></i>
+                {{ sub.grade }}/20 · {{ sub.grade >= 12 ? 'Aprobado' : 'Desaprobado' }}
+              </span>
+            } @else {
+              <div class="grade-pending-row">
+                <input type="number" min="0" max="20" placeholder="0–20"
+                       [(ngModel)]="grades[sub.id]" class="grade-input-inline">
+                <button class="btn-grade-inline" (click)="gradeSubmission(sub.id)">
+                  <i class="fa-solid fa-check"></i> Calificar
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Quick summary for practice -->
+        @if (tarea.taskType === 'PRACTICA' && practiceAnswersMap[sub.id]?.length) {
+          <div class="practice-summary">
+            <i class="fa-solid fa-circle-check" style="color:#16a34a"></i>
+            {{ correctCount(sub.id) }} / {{ totalQuestions(sub.id) }} correctas
+            @if (pendingWrittenCount(sub.id) > 0) {
+              <span class="written-pending-badge">
+                <i class="fa-solid fa-pen"></i> {{ pendingWrittenCount(sub.id) }} por corregir
+              </span>
+            }
+          </div>
+        }
+
+        <!-- Action row -->
+        <div class="sub-actions">
+          @if (tarea.taskType === 'PRACTICA' && practiceAnswersMap[sub.id]?.length) {
+            <button class="btn-toggle" (click)="toggleAnswers(sub.id)">
+              <i class="fa-solid" [class.fa-eye]="!expandedAnswers.has(sub.id)" [class.fa-eye-slash]="expandedAnswers.has(sub.id)"></i>
+              {{ expandedAnswers.has(sub.id) ? 'Ocultar respuestas' : 'Ver respuestas' }}
+            </button>
+          }
+          @if (submissionFiles[sub.id]?.length) {
+            <button class="btn-toggle" (click)="toggleAnswers(sub.id)">
+              <i class="fa-solid fa-paperclip"></i>
+              {{ expandedAnswers.has(sub.id) ? 'Ocultar archivos' : 'Ver archivos (' + submissionFiles[sub.id].length + ')' }}
+            </button>
+          }
+        </div>
+
+        <!-- Expanded: practice answers -->
+        @if (expandedAnswers.has(sub.id)) {
+          @if (tarea.taskType === 'PRACTICA' && practiceAnswersMap[sub.id]?.length) {
+            <div class="answers-panel">
+              @for (answer of practiceAnswersMap[sub.id]; track answer.question?.questionOrder) {
+                <div class="answer-row"
+                     [ngClass]="{
+                       'correct': answer.correct === true,
+                       'incorrect': answer.correct === false,
+                       'written': answer.question?.writtenQuestion && answer.correct == null
+                     }">
+                  <div class="answer-q-num">P{{ answer.question?.questionOrder }}</div>
+                  <div class="answer-body">
+                    <p class="answer-q-text">{{ answer.question?.questionText }}</p>
+                    @if (answer.question?.writtenQuestion) {
+                      <p class="answer-given"><i class="fa-solid fa-pen"></i> {{ answer.writtenAnswer ?? 'Sin responder' }}</p>
+                      <div class="written-grade-row">
+                        <button class="btn-mark" [class.active-correct]="answer.correct === true" (click)="markWrittenAnswer(answer, sub, true)">
+                          <i class="fa-solid fa-check"></i> Correcto
+                        </button>
+                        <button class="btn-mark" [class.active-incorrect]="answer.correct === false" (click)="markWrittenAnswer(answer, sub, false)">
+                          <i class="fa-solid fa-xmark"></i> Incorrecto
+                        </button>
+                        @if (answer.correct === true) {
+                          <span class="answer-tag correct"><i class="fa-solid fa-check"></i> Correcto</span>
+                        } @else if (answer.correct === false) {
+                          <span class="answer-tag incorrect"><i class="fa-solid fa-xmark"></i> Incorrecto</span>
+                        } @else {
+                          <span class="answer-tag written">Sin corregir</span>
+                        }
+                      </div>
+                    } @else {
+                      <p class="answer-given">
+                        <i class="fa-solid fa-arrow-right"></i>
+                        {{ answer.selectedOption?.optionText ?? 'Sin responder' }}
+                      </p>
+                      <span class="answer-tag" [class.correct]="answer.correct" [class.incorrect]="!answer.correct">
+                        <i class="fa-solid" [class.fa-check]="answer.correct" [class.fa-xmark]="!answer.correct"></i>
+                        {{ answer.correct ? 'Correcto' : 'Incorrecto' }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Files -->
+          @if (submissionFiles[sub.id]?.length) {
+            <div class="files-panel">
+              @for (file of submissionFiles[sub.id]; track file.storedName) {
+                <div class="file-row">
+                  <span><i class="fa-solid fa-file"></i> {{ file.originalName }}</span>
+                  <a class="btn-download" [href]="downloadFile(file.storedName)" target="_blank">
+                    <i class="fa-solid fa-download"></i> Descargar
+                  </a>
+                </div>
+              }
+            </div>
+          }
+        }
+
+        <!-- Feedback panel -->
+        <div class="feedback-panel">
+          @if (feedbackSaved[sub.id] && !editingFeedback.has(sub.id)) {
+            <div class="feedback-note">
+              <div class="feedback-note-icon"><i class="fa-solid fa-comment-dots"></i></div>
+              <div class="feedback-note-body">
+                <span class="feedback-note-label">Retroalimentación enviada</span>
+                <p class="feedback-note-text">{{ feedbacks[sub.id] }}</p>
+              </div>
+              <button class="btn-edit-feedback" (click)="startEditFeedback(sub.id)" title="Editar">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+            </div>
+          } @else {
+            <div class="feedback-compose">
+              <div class="feedback-compose-icon"><i class="fa-solid fa-comment-pen"></i></div>
+              <div class="feedback-compose-body">
+                <textarea class="feedback-textarea"
+                          rows="2"
+                          placeholder="Escribe una retroalimentación para el estudiante..."
+                          [(ngModel)]="feedbacks[sub.id]"></textarea>
+                <div class="feedback-compose-foot">
+                  @if (editingFeedback.has(sub.id)) {
+                    <button class="btn-cancel-feedback" (click)="cancelEditFeedback(sub.id)">
+                      Cancelar
+                    </button>
+                  }
+                  <button class="btn-send-feedback" (click)="saveFeedback(sub.id)">
+                    <i class="fa-solid fa-paper-plane"></i> Enviar retroalimentación
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+      </div>
+    }
+  </div>
+
+  <!-- Section: Sin entregar -->
+  <div class="section-bar" style="margin-top:28px">
+    <div class="section-title">
+      <i class="fa-solid fa-hourglass-half" style="color:#d97706"></i>
+      <span>Sin entregar</span>
+    </div>
+    <span class="section-count">{{ pendingStudents.length }} pendiente(s)</span>
+  </div>
+
+  @if (pendingStudents.length === 0) {
+    <div class="empty-state small">
+      <i class="fa-solid fa-circle-check empty-icon" style="color:#16a34a"></i>
+      <h2>¡Todos entregaron!</h2>
+    </div>
+  } @else {
+    <div class="pending-list">
+      @for (student of pendingStudents; track student.id) {
+        <div class="pending-row">
+          <div class="avatar sm">{{ getInitials(student.name) }}</div>
+          <span class="pending-name">{{ student.name }}</span>
+          <span class="badge-pending">Pendiente</span>
+        </div>
+      }
+    </div>
+  }
+}

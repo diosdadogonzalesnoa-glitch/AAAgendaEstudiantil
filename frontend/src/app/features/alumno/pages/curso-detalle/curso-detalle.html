@@ -1,0 +1,105 @@
+<div class="top">
+  <div class="top-left">
+    <a routerLink="/alumno/cursos" class="back-btn">‹</a>
+    <div class="title">
+      <h1>{{ curso?.name ?? 'Curso' }}</h1>
+      <p>Gestiona tareas, clases y prácticas del curso</p>
+    </div>
+  </div>
+</div>
+
+@if (curso) {
+  <div class="info-grid">
+    <div class="info-card">
+      <h2>{{ tareas.length }}</h2>
+      <span>Tareas publicadas</span>
+    </div>
+    <div class="info-card">
+      <h2>{{ curso.teacher }}</h2>
+      <span>Docente encargado</span>
+    </div>
+    <div class="info-card">
+      <h2>{{ curso.schedule }}</h2>
+      <span>Horario del curso</span>
+    </div>
+  </div>
+
+  <!-- LECCIONES -->
+  <div class="lessons-box">
+    <div class="lessons-header">
+      <h3>📘 Clases</h3>
+      <span>{{ lessonGroups.length }} clase(s)</span>
+    </div>
+
+    @if (lessonGroups.length === 0) {
+      <div class="empty">
+        <h2>No hay clases publicadas todavía</h2>
+        <p>Cuando el docente publique clases aparecerán aquí.</p>
+      </div>
+    }
+
+    @for (group of lessonGroups; track group.id) {
+      <div class="lesson-group">
+        <h3>{{ group.title }}</h3>
+        @for (lesson of group.lessons; track lesson.id) {
+          <div class="lesson-card">
+            <div>
+              <h4>{{ lesson.title }}</h4>
+              <p>{{ lesson.description }}</p>
+              <p>📄 {{ lesson.originalFileName }}</p>
+            </div>
+            <div class="lesson-actions">
+              <a class="lesson-view-btn" [routerLink]="['/alumno/leccion', lesson.id]">Ver PDF</a>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- TAREAS -->
+  <div class="tasks-box">
+    <div class="tasks-header">
+      <h3>📋 Publicaciones y tareas</h3>
+      <span>{{ tareas.length }} tareas</span>
+    </div>
+
+    @if (tareas.length === 0) {
+      <div class="empty">
+        <h2>No hay publicaciones todavía</h2>
+        <p>Cuando el docente publique tareas o prácticas aparecerán aquí.</p>
+      </div>
+    }
+
+    @for (task of tareas; track task.id) {
+      <div class="task">
+        <div class="task-left">
+          <h2>{{ task.title }}</h2>
+          <p>{{ task.description }}</p>
+          <div class="task-info">
+            <span>🕒 {{ formatDate(task.dueDate) }}</span>
+            @if (task.taskType === 'PRACTICA') {
+              <span>📝 Práctica calificada</span>
+            }
+          </div>
+
+          @if (isAlumno) {
+            <div [class]="getTaskStatusClass(task.id)">
+              {{ getTaskStatusText(task) }}
+            </div>
+          }
+        </div>
+
+        <div class="task-right">
+          @if (task.taskType === 'PRACTICA') {
+            <div class="badge practice-badge">PRÁCTICA</div>
+          } @else {
+            <div class="badge" [class.high]="task.priority==='ALTA'" [class.medium]="task.priority==='MEDIA'" [class.low]="task.priority==='BAJA'">
+              {{ task.priority }}
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

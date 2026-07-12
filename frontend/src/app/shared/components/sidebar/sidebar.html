@@ -1,0 +1,107 @@
+<!-- Hamburger mobile -->
+<button class="hamburger-btn" (click)="toggleMobile()" aria-label="Menú">
+  <i class="fa-solid fa-bars"></i>
+</button>
+
+<!-- Overlay mobile -->
+<div class="overlay" [class.active]="mobileOpen" (click)="closeMobile()"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" [class.collapsed]="isCollapsed" [class.mobile-open]="mobileOpen">
+
+  <!-- Perfil -->
+  <div class="sb-profile">
+    <div class="sb-avatar-wrap">
+      <div class="sb-avatar">{{ getInitials() }}</div>
+      <span class="sb-online"></span>
+    </div>
+    @if (!isCollapsed) {
+      <div class="sb-user-info">
+        <span class="sb-name">{{ userName }}</span>
+        <span class="sb-badge">{{ userRole }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Navegación -->
+  <nav class="sb-nav">
+
+    <!-- PRINCIPAL -->
+    <div class="sb-section">
+      @if (!isCollapsed) { <span class="sb-label">PRINCIPAL</span> }
+
+      <a class="sb-link" routerLinkActive="active"
+         [routerLink]="isDocente ? '/docente/dashboard' : '/alumno/dashboard'"
+         (click)="closeMobile()">
+        <span class="sb-icon"><i class="fa-solid fa-house"></i></span>
+        @if (!isCollapsed) { <span>Dashboard</span> }
+      </a>
+
+      <a class="sb-link" routerLinkActive="active"
+         [routerLink]="isDocente ? '/docente/cursos' : '/alumno/cursos'"
+         (click)="closeMobile()">
+        <span class="sb-icon"><i class="fa-solid fa-book-open"></i></span>
+        @if (!isCollapsed) { <span>Mis Cursos</span> }
+      </a>
+
+      <a class="sb-link" routerLinkActive="active"
+         [routerLink]="isDocente ? '/docente/tareas' : '/alumno/tareas'"
+         (click)="closeMobile()">
+        <span class="sb-icon"><i class="fa-solid fa-list-check"></i></span>
+        @if (!isCollapsed) { <span>Tareas</span> }
+      </a>
+    </div>
+
+    <!-- ACADÉMICO -->
+    <div class="sb-section">
+      @if (!isCollapsed) { <span class="sb-label">ACADÉMICO</span> }
+
+
+      @if (!isDocente) {
+        <a class="sb-link" routerLink="/alumno/estudio" routerLinkActive="active" (click)="closeMobile()">
+          <span class="sb-icon"><i class="fa-solid fa-brain"></i></span>
+          @if (!isCollapsed) { <span>Estudio</span> }
+        </a>
+      }
+
+      @if (isDocente) {
+        <a class="sb-link" routerLink="/docente/estudio" routerLinkActive="active" (click)="closeMobile()">
+          <span class="sb-icon"><i class="fa-solid fa-chart-line"></i></span>
+          @if (!isCollapsed) { <span>Estadísticas</span> }
+        </a>
+      }
+
+      <a class="sb-link" routerLink="/recordatorios" routerLinkActive="active" (click)="closeMobile()">
+        <span class="sb-icon"><i class="fa-solid fa-bell"></i></span>
+        @if (!isCollapsed) { <span>Recordatorios</span> }
+      </a>
+    </div>
+
+    <!-- CUENTA -->
+    <div class="sb-section">
+      @if (!isCollapsed) { <span class="sb-label">CUENTA</span> }
+
+      <a class="sb-link" routerLink="/perfil" routerLinkActive="active" (click)="closeMobile()">
+        <span class="sb-icon"><i class="fa-solid fa-circle-user"></i></span>
+        @if (!isCollapsed) { <span>Mi Perfil</span> }
+      </a>
+    </div>
+
+  </nav>
+
+  <!-- Footer -->
+  <div class="sb-footer">
+    <button class="sb-collapse-btn" (click)="toggleCollapse()" [title]="isCollapsed ? 'Expandir' : 'Colapsar'">
+      <span class="sb-icon" [class.rotated]="isCollapsed">
+        <i class="fa-solid fa-chevron-left"></i>
+      </span>
+      @if (!isCollapsed) { <span>COLAPSAR</span> }
+    </button>
+
+    <button class="sb-logout-btn" (click)="logout()">
+      <span class="sb-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+      @if (!isCollapsed) { <span>Cerrar Sesión</span> }
+    </button>
+  </div>
+
+</aside>

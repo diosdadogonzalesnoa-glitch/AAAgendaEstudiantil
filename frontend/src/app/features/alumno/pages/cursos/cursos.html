@@ -1,0 +1,111 @@
+<div class="top">
+  <div class="title">
+    <h1>{{ searchMode ? 'Buscar cursos' : 'Mis Cursos' }}</h1>
+    <p>{{ searchMode ? 'Resultados de búsqueda' : 'Cursos en los que estás inscrito' }}</p>
+  </div>
+</div>
+
+<!-- Buscador -->
+<div class="search-bar">
+  <div class="search-input-wrap">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" [(ngModel)]="search" placeholder="Buscar cursos por nombre..." (keyup.enter)="buscar()" />
+  </div>
+  <button class="btn-search" (click)="buscar()">Buscar</button>
+  @if (searchMode) {
+    <button class="btn-back" (click)="cargarMisCursos()">
+      <i class="fa-solid fa-arrow-left"></i> Mis cursos
+    </button>
+  }
+</div>
+
+@if (!cursos.length && !searchMode) {
+  <div class="empty">
+    <i class="fa-solid fa-book-open empty-icon"></i>
+    <h2>No estás inscrito en ningún curso</h2>
+    <p>Usa el buscador de arriba para encontrar e inscribirte en cursos.</p>
+  </div>
+}
+
+@if (!cursos.length && searchMode) {
+  <div class="empty">
+    <i class="fa-solid fa-magnifying-glass empty-icon"></i>
+    <h2>No se encontraron cursos</h2>
+    <p>Intenta con otro nombre o término de búsqueda.</p>
+  </div>
+}
+
+<div class="courses-grid">
+  @for (curso of cursos; track curso.id; let i = $index) {
+    <div class="course-card">
+
+      <!-- Banner -->
+      <div class="card-banner" [style.background]="getGradient(i)">
+
+        @if (!searchMode && curso.status) {
+          <div class="banner-badge" [class.badge-active]="curso.status !== 'TERMINADO'" [class.badge-done]="curso.status === 'TERMINADO'">
+            @if (curso.status === 'TERMINADO') {
+              <i class="fa-solid fa-circle-check"></i> Terminado
+            } @else {
+              <i class="fa-solid fa-circle"></i> Activo
+            }
+          </div>
+        }
+
+        @if (searchMode) {
+          <div class="banner-badge badge-search">
+            <i class="fa-solid fa-graduation-cap"></i> Disponible
+          </div>
+        }
+
+        <div class="banner-initials">{{ getInitials(curso.name) }}</div>
+      </div>
+
+      <!-- Cuerpo -->
+      <div class="card-body">
+
+        <h2 class="course-name">{{ curso.name }}</h2>
+
+        <div class="course-meta">
+          <div class="meta-item">
+            <i class="fa-solid fa-chalkboard-user"></i>
+            <span>{{ curso.teacher }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fa-regular fa-clock"></i>
+            <span>{{ curso.schedule }}</span>
+          </div>
+        </div>
+
+        <div class="course-stats">
+          <div class="stat">
+            <i class="fa-solid fa-users"></i>
+            <div class="stat-info">
+              <span class="stat-num">{{ curso.studentsCount ?? 0 }}</span>
+              <span class="stat-label">alumnos</span>
+            </div>
+          </div>
+          <div class="stat-sep"></div>
+          <div class="stat">
+            <i class="fa-solid fa-clipboard-list"></i>
+            <div class="stat-info">
+              <span class="stat-num">{{ curso.tasksCount ?? 0 }}</span>
+              <span class="stat-label">tareas</span>
+            </div>
+          </div>
+        </div>
+
+        @if (searchMode) {
+          <button class="btn-join" (click)="inscribirse(curso.id)">
+            <i class="fa-solid fa-plus"></i> Inscribirme
+          </button>
+        } @else {
+          <a class="btn-view" [routerLink]="['/alumno/cursos', curso.id]">
+            Ver curso &nbsp;<i class="fa-solid fa-arrow-right"></i>
+          </a>
+        }
+
+      </div>
+    </div>
+  }
+</div>

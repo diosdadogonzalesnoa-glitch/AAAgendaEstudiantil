@@ -1,0 +1,236 @@
+<!-- Header -->
+<div class="top">
+  <div class="title">
+    <h1>Tareas</h1>
+    <p>Gestiona tus entregas, prácticas y actividades</p>
+  </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="stat-grid">
+  <div class="stat-card accent">
+    <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+    <div class="stat-body">
+      <span class="stat-num">{{ stats?.totalTasks ?? 0 }}</span>
+      <span class="stat-lbl">Total</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon warning"><i class="fa-solid fa-hourglass-half"></i></div>
+    <div class="stat-body">
+      <span class="stat-num">{{ stats?.pendingTasks ?? 0 }}</span>
+      <span class="stat-lbl">Pendientes</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon success"><i class="fa-solid fa-circle-check"></i></div>
+    <div class="stat-body">
+      <span class="stat-num">{{ stats?.completedTasks ?? 0 }}</span>
+      <span class="stat-lbl">Completadas</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon danger"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <div class="stat-body">
+      <span class="stat-num">{{ stats?.overdueTasks ?? 0 }}</span>
+      <span class="stat-lbl">Vencidas</span>
+    </div>
+  </div>
+</div>
+
+<!-- Section title -->
+<div class="section-bar">
+  <div class="section-title">
+    <i class="fa-solid fa-list-check"></i>
+    <span>Todas las tareas y prácticas</span>
+  </div>
+  <span class="section-count">{{ tareas.length }} actividad(es)</span>
+</div>
+
+@if (!tareas.length) {
+  <div class="empty">
+    <i class="fa-solid fa-inbox empty-icon"></i>
+    <h2>No hay actividades todavía</h2>
+    <p>Cuando un docente publique tareas o prácticas aparecerán aquí.</p>
+  </div>
+}
+
+<!-- Task Cards -->
+<div class="tasks-list">
+  @for (tarea of tareas; track tarea.id) {
+    <div class="task-card"
+         [class.is-practice]="tarea.taskType === 'PRACTICA'"
+         [class.is-high]="tarea.priority === 'ALTA'"
+         [class.is-medium]="tarea.priority === 'MEDIA'"
+         [class.is-done]="tarea.submissionStatus === 'CALIFICADO'"
+         [class.is-overdue]="isPast(tarea.dueDate) && tarea.submissionStatus === 'NO_ENTREGADO'">
+
+      <!-- Accent strip -->
+      <div class="task-strip"></div>
+
+      <!-- Card content -->
+      <div class="task-inner">
+
+        <!-- Top row: title + badges -->
+        <div class="task-head">
+          <div class="task-title-wrap">
+            @if (tarea.taskType === 'PRACTICA') {
+              <span class="task-type-icon practice"><i class="fa-solid fa-pen-ruler"></i></span>
+            } @else {
+              <span class="task-type-icon common"><i class="fa-solid fa-file-lines"></i></span>
+            }
+            <h2 class="task-title">{{ tarea.title }}</h2>
+          </div>
+          <div class="task-badges">
+            @if (tarea.taskType === 'PRACTICA') {
+              <span class="badge badge-practice"><i class="fa-solid fa-pen-ruler"></i> Práctica</span>
+            } @else {
+              @if (tarea.priority === 'ALTA') {
+                <span class="badge badge-high"><i class="fa-solid fa-fire"></i> Alta</span>
+              } @else if (tarea.priority === 'MEDIA') {
+                <span class="badge badge-medium"><i class="fa-solid fa-minus"></i> Media</span>
+              } @else {
+                <span class="badge badge-low"><i class="fa-solid fa-arrow-down"></i> Baja</span>
+              }
+            }
+            @if (isPast(tarea.dueDate) && tarea.submissionStatus === 'NO_ENTREGADO') {
+              <span class="badge badge-overdue"><i class="fa-solid fa-clock"></i> Vencida</span>
+            } @else if (tarea.submissionStatus === 'NO_ENTREGADO') {
+              <span class="badge badge-pending"><i class="fa-regular fa-clock"></i> Pendiente</span>
+            } @else if (tarea.submissionStatus === 'PENDIENTE_CALIFICACION') {
+              <span class="badge badge-grading"><i class="fa-solid fa-hourglass-half"></i> En revisión</span>
+            } @else if (tarea.submissionStatus === 'CALIFICADO') {
+              <span class="badge badge-done"><i class="fa-solid fa-check"></i> Completada</span>
+            }
+          </div>
+        </div>
+
+        <!-- Description -->
+        @if (tarea.description) {
+          <p class="task-desc">{{ tarea.description }}</p>
+        }
+
+        <!-- Meta row -->
+        <div class="task-meta">
+          <span class="meta-item">
+            <i class="fa-solid fa-book-open"></i>
+            <b>{{ tarea.course?.name ?? 'Sin curso' }}</b>
+          </span>
+          <span class="meta-sep"></span>
+          <span class="meta-item">
+            <i class="fa-regular fa-calendar"></i>
+            {{ formatDate(tarea.dueDate) }}
+          </span>
+          <span class="meta-sep"></span>
+          <span class="meta-item">
+            @if (tarea.taskType === 'PRACTICA') {
+              <i class="fa-solid fa-pen-ruler"></i> Práctica calificada
+            } @else {
+              <i class="fa-solid fa-paperclip"></i> Tarea común
+            }
+          </span>
+          @if (tarea.taskType !== 'PRACTICA' && tarea.maxAttempts > 1 && tarea.submissionStatus !== 'NO_ENTREGADO') {
+            <span class="meta-sep"></span>
+            <span class="meta-item attempt-info">
+              <i class="fa-solid fa-rotate-right"></i>
+              Intento {{ tarea.attemptNumber ?? 1 }}/{{ tarea.maxAttempts }}
+            </span>
+          }
+        </div>
+
+        <!-- Grade pill (if graded) -->
+        @if (tarea.submissionStatus === 'CALIFICADO') {
+          <div class="grade-pill" [class.approved]="tarea.grade >= 12" [class.failed]="tarea.grade < 12">
+            <i class="fa-solid fa-star"></i>
+            Nota: {{ tarea.grade }}/20 — {{ tarea.grade >= 12 ? 'Aprobado' : 'Desaprobado' }}
+          </div>
+        }
+
+        <!-- Actions -->
+        <div class="task-foot">
+
+          @if (tarea.taskType === 'PRACTICA' && tarea.submissionStatus === 'NO_ENTREGADO' && !isPast(tarea.dueDate)) {
+            <a class="btn btn-primary" [routerLink]="['/alumno/practica', tarea.id]">
+              <i class="fa-solid fa-pen-to-square"></i> Resolver práctica
+            </a>
+          }
+
+          @if (tarea.taskType !== 'PRACTICA' && !isPast(tarea.dueDate)) {
+            @if (tarea.submissionStatus === 'NO_ENTREGADO' || (tarea.maxAttempts > 1 && tarea.attemptNumber < tarea.maxAttempts)) {
+              <button class="btn btn-upload" (click)="toggleDelivery(tarea.id)">
+                <i class="fa-solid fa-upload"></i>
+                {{ openDeliveries[tarea.id] ? 'Cancelar' : 'Entregar tarea' }}
+              </button>
+            }
+          }
+
+          @if (tarea.submissionStatus !== 'NO_ENTREGADO') {
+            @if (tarea.taskType === 'PRACTICA') {
+              <a class="btn btn-review" [routerLink]="['/alumno/practica', tarea.id]">
+                <i class="fa-solid fa-magnifying-glass"></i> Ver mis respuestas
+              </a>
+            }
+          }
+
+          @if (tarea.submissionStatus === 'NO_ENTREGADO' && isPast(tarea.dueDate)) {
+            <span class="foot-note overdue-note">
+              <i class="fa-solid fa-lock"></i> Plazo vencido
+            </span>
+          }
+        </div>
+
+        <!-- Delivery form -->
+        @if (openDeliveries[tarea.id] && tarea.taskType !== 'PRACTICA' && !isPast(tarea.dueDate)) {
+          <div class="delivery-form">
+            <form (submit)="submitDelivery(tarea.id, $event)">
+              <label class="form-label">Respuesta escrita</label>
+              <textarea name="answerText" maxlength="9000"
+                        placeholder="Escribe tu respuesta aquí..."></textarea>
+              <label class="form-label">Archivos adjuntos</label>
+              <input type="file" multiple (change)="onFileChange($event, tarea.id, tarea.maxFiles ?? 20)" />
+              <small><i class="fa-solid fa-paperclip"></i> Máximo {{ tarea.maxFiles ?? 20 }} archivos. Puedes seleccionar varios en la misma ventana o abrirla varias veces.</small>
+              @if (selectedFiles[tarea.id]?.length) {
+                <div class="selected-files">
+                  @for (file of selectedFiles[tarea.id]; track file.name; let i = $index) {
+                    <div class="selected-file">
+                      <i class="fa-solid fa-file"></i>
+                      <span class="selected-file-name">{{ file.name }}</span>
+                      <button type="button" class="btn-remove-file" (click)="removeFile(tarea.id, i)" title="Quitar archivo">
+                        <i class="fa-solid fa-xmark"></i>
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+              <button type="submit" class="btn btn-send">
+                <i class="fa-solid fa-paper-plane"></i> Enviar entrega
+              </button>
+            </form>
+          </div>
+        }
+
+        <!-- Submitted box -->
+        @if (tarea.submissionStatus !== 'NO_ENTREGADO' && tarea.taskType !== 'PRACTICA') {
+          <div class="submitted-box">
+            <i class="fa-solid fa-circle-check"></i>
+            <div>
+              <strong>Tarea entregada</strong>
+              <p>Tu entrega fue registrada correctamente.</p>
+            </div>
+          </div>
+        }
+
+        @if (tarea.feedback) {
+          <div class="feedback-box">
+            <div class="feedback-head">
+              <i class="fa-solid fa-comment-dots"></i>
+              <span>Retroalimentación del docente</span>
+            </div>
+            <p>{{ tarea.feedback }}</p>
+          </div>
+        }
+
+      </div>
+    </div>
+  }
+</div>

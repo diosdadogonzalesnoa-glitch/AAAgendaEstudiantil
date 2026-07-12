@@ -1,0 +1,354 @@
+<div class="top">
+  <div class="top-left">
+    <a routerLink="/docente/cursos" class="back-btn">‹</a>
+    <div class="title">
+      <h1>{{ curso?.name ?? 'Curso' }}</h1>
+      <p>Gestiona tareas, clases y prácticas del curso</p>
+    </div>
+  </div>
+</div>
+
+@if (curso) {
+  <div class="info-grid">
+    <div class="info-card">
+      <h2>{{ tareas.length }}</h2>
+      <span>Tareas publicadas</span>
+    </div>
+    <div class="info-card">
+      <h2>{{ curso.teacher }}</h2>
+      <span>Docente encargado</span>
+    </div>
+    <div class="info-card">
+      <h2>{{ curso.schedule }}</h2>
+      <span>Horario del curso</span>
+    </div>
+  </div>
+
+  <!-- PUBLICAR -->
+  <div class="form-box">
+    <h3>Publicar contenido</h3>
+    <div class="publish-tabs">
+      <button class="publish-tab" [class.active]="activeTab==='tarea'" (click)="showTab('tarea')">📋 Nueva Tarea</button>
+      <button class="publish-tab" [class.active]="activeTab==='practica'" (click)="showTab('practica')">📝 Nueva Práctica</button>
+      <button class="publish-tab" [class.active]="activeTab==='leccion'" (click)="showTab('leccion')">📘 Nueva Clase</button>
+    </div>
+
+    <!-- Tarea -->
+    @if (activeTab === 'tarea') {
+      <div class="form-grid">
+        <input [(ngModel)]="newTarea.title" placeholder="Título de la tarea" />
+        <input [(ngModel)]="newTarea.dueDate" type="datetime-local" />
+        <textarea [(ngModel)]="newTarea.description" placeholder="Descripción..."></textarea>
+        <select [(ngModel)]="newTarea.priority">
+          <option value="ALTA">Alta</option>
+          <option value="MEDIA">Media</option>
+          <option value="BAJA">Baja</option>
+        </select>
+        <div class="form-row-2">
+          <div class="form-field">
+            <label class="field-label">Intentos permitidos</label>
+            <select [(ngModel)]="newTarea.maxAttempts">
+              <option [ngValue]="1">1 intento</option>
+              <option [ngValue]="2">2 intentos</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="field-label">Máx. archivos por entrega</label>
+            <input type="number" min="1" max="50" [(ngModel)]="newTarea.maxFiles" placeholder="20" />
+          </div>
+        </div>
+        <button (click)="publicarTarea()">Publicar Tarea</button>
+      </div>
+    }
+
+    <!-- Práctica -->
+    @if (activeTab === 'practica') {
+      <div class="form-grid">
+        <input [(ngModel)]="newPractica.title" placeholder="Título de la práctica" />
+        <input [(ngModel)]="newPractica.dueDate" type="datetime-local" />
+        <textarea [(ngModel)]="newPractica.description" placeholder="Descripción..."></textarea>
+      </div>
+
+      <!-- Question builder -->
+      <div class="qbuilder">
+        <div class="qbuilder-header">
+          <span class="qbuilder-title">
+            <i class="fa-solid fa-list-ol"></i>
+            Preguntas
+            <span class="qcount-badge" [class.valid]="practiceQuestions.length === 5 || practiceQuestions.length === 10 || practiceQuestions.length === 20">
+              {{ practiceQuestions.length }}
+            </span>
+          </span>
+          <span class="qhint">Debes tener 5, 10 o 20 preguntas</span>
+        </div>
+
+        @for (q of practiceQuestions; track $index) {
+          @let qIdx = $index;
+          <div class="q-card">
+            <div class="q-card-head">
+              <span class="q-num">P{{ qIdx + 1 }}</span>
+              <input class="q-text-input" [(ngModel)]="q.questionText" placeholder="Enunciado de la pregunta..." />
+              <button class="btn-written" [class.active]="q.writtenQuestion" (click)="toggleWritten(qIdx)" title="Pregunta de texto libre">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+              <button class="btn-remove-q" (click)="removeQuestion(qIdx)">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            @if (!q.writtenQuestion) {
+              <div class="q-options">
+                @for (opt of q.options; track $index) {
+                  <div class="opt-row" [class.is-correct]="opt.correct">
+                    <input type="radio" [name]="'q-' + qIdx" [checked]="opt.correct" (change)="setCorrect(q, $index)" />
+                    <input class="opt-input" [(ngModel)]="opt.optionText" placeholder="Alternativa {{ $index + 1 }}..." />
+                  </div>
+                }
+                <p class="opt-hint"><i class="fa-solid fa-circle-info"></i> Marca el círculo de la respuesta correcta</p>
+              </div>
+            } @else {
+              <p class="written-hint"><i class="fa-solid fa-pen-line"></i> Pregunta de respuesta escrita — el alumno escribirá su respuesta</p>
+            }
+          </div>
+        }
+
+        <button class="btn-add-q" (click)="addQuestion()">
+          <i class="fa-solid fa-plus"></i> Agregar pregunta
+        </button>
+      </div>
+
+      @if (practiceError) {
+        <div class="form-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ practiceError }}</div>
+      }
+      @if (practiceSuccess) {
+        <div class="form-success"><i class="fa-solid fa-circle-check"></i> ¡Práctica publicada correctamente!</div>
+      }
+
+      <button class="publish-btn" (click)="publicarPractica()" [disabled]="practiceQuestions.length === 0">
+        <i class="fa-solid fa-paper-plane"></i> Publicar Práctica
+      </button>
+    }
+
+    <!-- Lección -->
+    @if (activeTab === 'leccion') {
+      <div class="lesson-form">
+        <input [(ngModel)]="newLesson.groupTitle" placeholder="Nombre del grupo/semana" />
+        <input [(ngModel)]="newLesson.title" placeholder="Título de la clase" />
+        <textarea [(ngModel)]="newLesson.description" placeholder="Descripción..."></textarea>
+        <input type="file" accept=".pdf" (change)="onLessonFile($event)" />
+        <button (click)="publicarLeccion()">Publicar Clase</button>
+      </div>
+    }
+  </div>
+
+  <!-- LECCIONES -->
+  <div class="lessons-box">
+    <div class="lessons-header">
+      <h3>📘 Clases</h3>
+      <span>{{ lessonGroups.length }} clase(s)</span>
+    </div>
+
+    @if (lessonGroups.length === 0) {
+      <div class="empty">
+        <h2>No hay clases publicadas todavía</h2>
+        <p>Publica la primera clase usando el formulario de arriba.</p>
+      </div>
+    }
+
+    @for (group of lessonGroups; track group.id) {
+      <div class="lesson-group">
+        <h3>{{ group.title }}</h3>
+        @for (lesson of group.lessons; track lesson.id) {
+          <div class="lesson-card">
+            <div>
+              <h4>{{ lesson.title }}</h4>
+              <p>{{ lesson.description }}</p>
+              <p>📄 {{ lesson.originalFileName }}</p>
+            </div>
+            <div class="lesson-actions">
+              <a class="lesson-view-btn" [routerLink]="['/docente/leccion', lesson.id]">Ver PDF</a>
+              <button class="lesson-delete-btn" (click)="eliminarLeccion(lesson.id)">Eliminar</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- TAREAS -->
+  <div class="tasks-box">
+    <div class="tasks-header">
+      <h3>📋 Publicaciones y tareas</h3>
+      <span>{{ tareas.length }} tareas</span>
+    </div>
+
+    @if (tareas.length === 0) {
+      <div class="empty">
+        <h2>No hay publicaciones todavía</h2>
+        <p>Publica la primera tarea usando el formulario de arriba.</p>
+      </div>
+    }
+
+    @for (task of tareas; track task.id) {
+      <div class="task">
+        <div class="task-left">
+          <h2>{{ task.title }}</h2>
+          <p>{{ task.description }}</p>
+          <div class="task-info">
+            <span>🕒 {{ formatDate(task.dueDate) }}</span>
+            @if (task.taskType === 'PRACTICA') {
+              <span>📝 Práctica calificada</span>
+            }
+            @if (task.taskType !== 'PRACTICA') {
+              <span>🔁 {{ task.maxAttempts ?? 1 }} intento(s)</span>
+              <span>📎 Máx. {{ task.maxFiles ?? 20 }} archivos</span>
+            }
+          </div>
+          <div class="task-actions">
+            <a class="btn btn-view" [routerLink]="['/docente/tareas', task.id, 'entregas']">Ver entregas</a>
+            @if (task.taskType !== 'PRACTICA') {
+              <button class="btn btn-edit" (click)="openEdit(task)">Editar</button>
+            } @else {
+              <button class="btn btn-edit" (click)="openEditPractica(task)">Editar</button>
+            }
+            <button class="btn btn-delete" (click)="eliminarTarea(task.id)">Eliminar</button>
+          </div>
+        </div>
+
+        <div class="task-right">
+          @if (task.taskType === 'PRACTICA') {
+            <div class="badge practice-badge">PRÁCTICA</div>
+          } @else {
+            <div class="badge"
+                 [class.high]="task.priority==='ALTA'"
+                 [class.medium]="task.priority==='MEDIA'"
+                 [class.low]="task.priority==='BAJA'">
+              {{ task.priority }}
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (editingTaskId === task.id) {
+        <div class="edit-panel">
+          <div class="edit-panel-header">
+            <h4>Editar tarea: {{ task.title }}</h4>
+            <button class="edit-close" (click)="cancelEdit()">✕</button>
+          </div>
+          <div class="edit-grid">
+            <div class="form-field">
+              <label class="field-label">Descripción</label>
+              <textarea [(ngModel)]="editForm.description" rows="3" placeholder="Descripción de la tarea..."></textarea>
+            </div>
+            <div class="form-field">
+              <label class="field-label">Fecha límite de entrega</label>
+              <input type="datetime-local" [(ngModel)]="editForm.dueDate" />
+            </div>
+            <div class="form-field">
+              <label class="field-label">Intentos permitidos</label>
+              <select [(ngModel)]="editForm.maxAttempts">
+                <option [ngValue]="1">1 intento</option>
+                <option [ngValue]="2">2 intentos</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="field-label">Máx. archivos por entrega</label>
+              <input type="number" min="1" max="50" [(ngModel)]="editForm.maxFiles" />
+            </div>
+          </div>
+          <div class="edit-actions">
+            <button class="btn btn-cancel" (click)="cancelEdit()">Cancelar</button>
+            <button class="btn btn-save" (click)="saveEdit()">Guardar cambios</button>
+          </div>
+        </div>
+      }
+
+      @if (editingPracticeId === task.id) {
+        <div class="edit-panel">
+          <div class="edit-panel-header">
+            <h4><i class="fa-solid fa-pen-ruler"></i> Editar práctica</h4>
+            <button class="edit-close" (click)="cancelEditPractica()">✕</button>
+          </div>
+
+          <!-- Basic info -->
+          <div class="edit-grid">
+            <div class="form-field">
+              <label class="field-label">Título</label>
+              <input [(ngModel)]="editPracticeForm.title" placeholder="Título de la práctica" />
+            </div>
+            <div class="form-field">
+              <label class="field-label">Fecha límite</label>
+              <input type="datetime-local" [(ngModel)]="editPracticeForm.dueDate" />
+            </div>
+            <div class="form-field" style="grid-column: span 2">
+              <label class="field-label">Descripción</label>
+              <textarea [(ngModel)]="editPracticeForm.description" rows="3" placeholder="Descripción..."></textarea>
+            </div>
+          </div>
+
+          <!-- Questions section -->
+          @if (editPracticeHasSubmissions) {
+            <div class="edit-submissions-warn">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              Esta práctica ya tiene {{ task.submissionsCount }} entrega(s). Solo puedes editar el título, descripción y fecha.
+            </div>
+          } @else {
+            <div class="edit-qbuilder-label">
+              <i class="fa-solid fa-list-ol"></i> Preguntas
+              <span class="qcount-badge" [class.valid]="editPracticeQuestions.length === 5 || editPracticeQuestions.length === 10 || editPracticeQuestions.length === 20">
+                {{ editPracticeQuestions.length }}
+              </span>
+              <span style="font-size:12px; color:#9ca3af; font-weight:400; margin-left:6px">Debe ser 5, 10 o 20</span>
+            </div>
+
+            <div class="qbuilder edit-qbuilder">
+              @for (q of editPracticeQuestions; track $index) {
+                @let qIdx = $index;
+                <div class="q-card">
+                  <div class="q-card-head">
+                    <span class="q-num">P{{ qIdx + 1 }}</span>
+                    <input class="q-text-input" [(ngModel)]="q.questionText" placeholder="Enunciado de la pregunta..." />
+                    <button class="btn-written" [class.active]="q.writtenQuestion" (click)="toggleEditWritten(qIdx)" title="Pregunta de texto libre">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn-remove-q" (click)="removeEditQuestion(qIdx)">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+                  @if (!q.writtenQuestion) {
+                    <div class="q-options">
+                      @for (opt of q.options; track $index) {
+                        <div class="opt-row" [class.is-correct]="opt.correct">
+                          <input type="radio" [name]="'eq-' + qIdx" [checked]="opt.correct" (change)="setEditCorrect(q, $index)" />
+                          <input class="opt-input" [(ngModel)]="opt.optionText" placeholder="Alternativa {{ $index + 1 }}..." />
+                        </div>
+                      }
+                      <p class="opt-hint"><i class="fa-solid fa-circle-info"></i> Marca el círculo de la respuesta correcta</p>
+                    </div>
+                  } @else {
+                    <p class="written-hint"><i class="fa-solid fa-pen-line"></i> Pregunta de respuesta escrita</p>
+                  }
+                </div>
+              }
+              <button class="btn-add-q" (click)="addEditQuestion()">
+                <i class="fa-solid fa-plus"></i> Agregar pregunta
+              </button>
+            </div>
+          }
+
+          @if (editPracticeError) {
+            <div class="form-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ editPracticeError }}</div>
+          }
+          @if (editPracticeSuccess) {
+            <div class="form-success"><i class="fa-solid fa-circle-check"></i> ¡Práctica actualizada correctamente!</div>
+          }
+
+          <div class="edit-actions" style="margin-top: 16px">
+            <button class="btn btn-cancel" (click)="cancelEditPractica()">Cancelar</button>
+            <button class="btn btn-save" (click)="saveEditPractica()">Guardar cambios</button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+}
