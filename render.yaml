@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: agenda-estudiantil-backend
+    runtime: java
+    plan: free
+    branch: feature/deployment
+    rootDir: backend
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/*.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
