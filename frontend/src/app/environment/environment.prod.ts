@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://tu-dominio-de-railway.up.railway.app/api'
+  apiUrl: 'https://aaagendaestudiantil-production.up.railway.app/api'
 };
