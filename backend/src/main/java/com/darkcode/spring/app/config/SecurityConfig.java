@@ -51,10 +51,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Agregamos ambas URLs permitidas: local y producción
+        // Agregamos tanto la URL general como la específica que Railway asignó
         config.setAllowedOrigins(List.of(
             "http://localhost:4200", 
-            "https://beneficial-passion-production.up.railway.app"
+            "https://beneficial-passion-production.up.railway.app",
+            "https://beneficial-passion-production-1b05.up.railway.app"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
