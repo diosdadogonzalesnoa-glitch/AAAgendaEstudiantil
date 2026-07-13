@@ -25,39 +25,49 @@ body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--text);
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* ── Layout base ── */
 .app-layout {
   display: flex;
   min-height: 100vh;
+  width: 100%;
 }
 
 .main-content {
   flex: 1;
   margin-left: var(--sidebar-width);
-  display: flex;
-  flex-direction: column;
   min-height: 100vh;
   transition: margin-left 0.3s ease;
+  width: calc(100% - var(--sidebar-width));
+  position: relative;
 }
 
 body.sidebar-collapsed .main-content {
   margin-left: var(--sidebar-width-collapsed);
+  width: calc(100% - var(--sidebar-width-collapsed));
 }
 
 .page-content {
-  flex: 1;
   padding: 30px;
+  width: 100%;
 }
 
+/* ── Ajustes Responsive (Móvil) ── */
 @media (max-width: 900px) {
+  .app-layout {
+    display: block !important;
+  }
+
   .main-content {
     margin-left: 0 !important;
+    width: 100vw !important;
   }
 
   .page-content {
     padding: 20px;
-    padding-top: 64px;
+    padding-top: 80px; /* Espacio extra para el botón hamburguesa */
   }
 }
