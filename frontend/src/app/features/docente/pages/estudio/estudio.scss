@@ -46,8 +46,16 @@
   &.active { background: #2563eb; border-color: #2563eb; color: white; }
 }
 
+/* Contenedor responsivo añadido para evitar desbordamientos */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .stats-table {
   width: 100%;
+  min-width: 600px; /* Asegura que la tabla no se colapse en pantallas pequeñas */
   border-collapse: collapse;
 
   thead tr {

@@ -35,31 +35,33 @@
       </div>
 
       @if (selectedStats.length > 0) {
-        <table class="stats-table">
-          <thead>
-            <tr>
-              <th>Estudiante</th>
-              <th>Total horas</th>
-              <th>Esta semana</th>
-              <th>Promedio diario</th>
-              <th>Sesiones</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (stat of selectedStats; track stat.studentName) {
+        <div class="table-responsive">
+          <table class="stats-table">
+            <thead>
               <tr>
-                <td class="student-name">
-                  <span class="dot" [style.background]="stat.color"></span>
-                  {{ stat.studentName }}
-                </td>
-                <td>{{ stat.totalHours }}h</td>
-                <td>{{ stat.weeklyHours }}h</td>
-                <td>{{ stat.averageDaily }}h</td>
-                <td>{{ stat.sessions }}</td>
+                <th>Estudiante</th>
+                <th>Total horas</th>
+                <th>Esta semana</th>
+                <th>Promedio diario</th>
+                <th>Sesiones</th>
               </tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (stat of selectedStats; track stat.studentName) {
+                <tr>
+                  <td class="student-name">
+                    <span class="dot" [style.background]="stat.color"></span>
+                    {{ stat.studentName }}
+                  </td>
+                  <td>{{ stat.totalHours }}h</td>
+                  <td>{{ stat.weeklyHours }}h</td>
+                  <td>{{ stat.averageDaily }}h</td>
+                  <td>{{ stat.sessions }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       }
 
       @if (selectedStats.length === 0) {
