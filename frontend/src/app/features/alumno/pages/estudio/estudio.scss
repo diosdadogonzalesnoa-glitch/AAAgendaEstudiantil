@@ -1,8 +1,8 @@
-$accent:  #7c3aed;
-$border:  #e5e7eb;
-$text:    #111827;
-$muted:   #6b7280;
-$bg-card: #ffffff;
+$accent:   #7c3aed;
+$border:   #e5e7eb;
+$text:     #111827;
+$muted:    #6b7280;
+$bg-card:  #ffffff;
 
 .page-title {
   font-size: 22px;
@@ -230,10 +230,18 @@ $bg-card: #ffffff;
   h2 { font-size: 15px; font-weight: 700; color: $text; margin-bottom: 4px; }
 }
 
+/* Clase añadida para el scroll horizontal */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Suaviza el scroll en iOS */
+  margin-top: 16px;
+}
+
 .stats-table {
   width: 100%;
+  min-width: 600px; /* Asegura que la tabla tenga espacio antes de hacer scroll */
   border-collapse: collapse;
-  margin-top: 16px;
 
   thead tr {
     border-bottom: 1.5px solid $border;

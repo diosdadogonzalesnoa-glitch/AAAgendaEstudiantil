@@ -2,7 +2,6 @@
 
 <div class="study-layout">
 
-  <!-- Temporizador -->
   <div class="timer-panel">
     <h2>Temporizador inteligente</h2>
     <p class="timer-sub">Selecciona un curso y una práctica pendiente para iniciar tu sesión de estudio.</p>
@@ -34,7 +33,6 @@
       </div>
     }
 
-    <!-- Preguntas durante la sesión -->
     @if (running && questions.length > 0 && currentQuestion) {
       <div class="question-panel">
         <div class="question-counter">
@@ -77,7 +75,6 @@
     </button>
   </div>
 
-  <!-- Stats laterales -->
   <div class="stats-panel">
     <div class="stat-box">
       <p class="stat-label">Esta semana</p>
@@ -92,36 +89,37 @@
   </div>
 </div>
 
-<!-- Estadísticas por curso -->
 @if (courseStats.length > 0) {
   <div class="course-stats-panel">
     <h2>Estadísticas por curso</h2>
     <p class="timer-sub">Resumen de estudio registrado con el temporizador inteligente.</p>
 
-    <table class="stats-table">
-      <thead>
-        <tr>
-          <th>Curso</th>
-          <th>Total horas</th>
-          <th>Esta semana</th>
-          <th>Promedio diario</th>
-          <th>Sesiones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (stat of courseStats; track stat.courseId) {
+    <div class="table-responsive">
+      <table class="stats-table">
+        <thead>
           <tr>
-            <td class="course-name">
-              <span class="dot" [style.background]="stat.color"></span>
-              {{ stat.courseName }}
-            </td>
-            <td>{{ stat.totalHours }}h</td>
-            <td>{{ stat.weeklyHours }}h</td>
-            <td>{{ stat.averageDaily }}h</td>
-            <td>{{ stat.sessions }}</td>
+            <th>Curso</th>
+            <th>Total horas</th>
+            <th>Esta semana</th>
+            <th>Promedio diario</th>
+            <th>Sesiones</th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (stat of courseStats; track stat.courseId) {
+            <tr>
+              <td class="course-name">
+                <span class="dot" [style.background]="stat.color"></span>
+                {{ stat.courseName }}
+              </td>
+              <td>{{ stat.totalHours }}h</td>
+              <td>{{ stat.weeklyHours }}h</td>
+              <td>{{ stat.averageDaily }}h</td>
+              <td>{{ stat.sessions }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
 }
